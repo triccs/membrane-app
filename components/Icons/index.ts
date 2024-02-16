@@ -1,0 +1,6 @@
+export { default as ClaimIcon } from './ClaimIcon'
+export { default as MintIcon } from './MintIcon'
+export { default as StakeIcon } from './StakeIcon'
+export { default as BidIcon } from './BidIcon'
+export { default as WalletIcon } from './WalletIcon'
+export { default as HomeIcon } from './HomeIcon '
