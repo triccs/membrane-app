@@ -3,6 +3,7 @@ import contracts from '@/config/contracts.json'
 import collateralAssets from '@/config/collateralAssets.json'
 import { AssetInfo, PriceResponse } from '@/contracts/codegen/oracle/Oracle.types'
 import getCosmWasmClient from '@/helpers/comswasmClient'
+import { queryClient } from '@/pages/_app'
 
 type CollateralAssets = {
   symbol: string
@@ -25,7 +26,14 @@ export const getAssetsInfo = () => {
   }) as AssetInfo[]
 }
 
-export const parsePrice = (prices: PriceResponse[]) => {
+export type Price = {
+  price: string;
+  symbol: string;
+  denom: string;
+  isNative: boolean;
+}
+
+export const parsePrice = (prices: PriceResponse[]): Price[] => {
   return prices.flatMap((price, index) => {
     const asset = collateralAssets[index] as CollateralAssets
     return {
@@ -34,6 +42,13 @@ export const parsePrice = (prices: PriceResponse[]) => {
     }
   })
 }
+
+export const getPriceByDenom = (denom: string) => {
+    const prices = queryClient.getQueryData(['oraclePrice']) as any[]
+    return prices?.find((price) => price.denom === denom)
+}
+
+
 
 export const getOraclePrices = async () => {
   const assetInfos = getAssetsInfo()

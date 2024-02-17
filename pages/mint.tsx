@@ -7,17 +7,17 @@ import React from 'react'
 type Props = {}
 
 const MintPage = (props: Props) => {
-  const prices = useOraclePrice()
-  const basket = useBasket()
-  const collateralInterest = useCollateralInterest()
-  const positions = useBasketPositions()
+  // const prices = useOraclePrice()
+  // const basket = useBasket()
+  // const collateralInterest = useCollateralInterest()
+  // const positions = useBasketPositions()
 
-  console.log({
-    prices,
-    basket,
-    collateralInterest,
-    positions,
-  })
+  // console.log({
+  //   prices,
+  //   basket,
+  //   collateralInterest,
+  //   positions,
+  // })
 
   return <Mint />
 }

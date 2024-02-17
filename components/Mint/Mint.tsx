@@ -17,41 +17,9 @@ import {
 } from '@chakra-ui/react'
 import React from 'react'
 import useVaultSummary from './hooks/useVaultSummary'
+import { useCurrentPosition } from './hooks/useCurrentPosition'
 
 type Props = {}
-
-const useMintStats = () => {
-  return [
-    {
-      label: 'DEBT',
-      value: '239 CDT',
-    },
-    {
-      label: 'LTV',
-      value: '82.1%',
-    },
-    {
-      label: 'COST',
-      value: '0.0028%',
-    },
-    {
-      label: 'BORROWABLE LTV',
-      value: '88%',
-    },
-    {
-      label: 'LIQ. VALUE',
-      value: '$254',
-    },
-    {
-      label: 'LIQUIDATION LTV',
-      value: '0.94%%',
-    },
-    {
-      label: 'LIQUIDATION LTV',
-      value: '$290',
-    },
-  ]
-}
 
 const useMyVaults = () => {
   return [
@@ -75,10 +43,8 @@ const useMyVaults = () => {
 }
 
 const Mint = (props: Props) => {
-  const stats = useMintStats()
+  const stats = useCurrentPosition()
   const myVaults = useMyVaults()
-
-  // const summary = useVaultSummary()
 
   const [atom, setAtom] = React.useState(30)
 
