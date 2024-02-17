@@ -10,7 +10,7 @@ export const useCurrentPosition = () => {
     },
     {
       label: 'LTV',
-      value: `${summary.ltv.maxLTV.toFixed(0)}%`,
+      value: `${summary.ltv}%`,
     },
     {
       label: 'COST',
@@ -18,7 +18,7 @@ export const useCurrentPosition = () => {
     },
     {
       label: 'BORROWABLE LTV',
-      value: `${summary.ltv.maxBorrowLTV?.toFixed(2)}%`,
+      value: `${summary?.borrowLTV}%`,
     },
     {
       label: 'LIQ. VALUE',
