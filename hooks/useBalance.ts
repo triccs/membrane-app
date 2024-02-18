@@ -10,7 +10,7 @@ export const useBalance = () => {
   const { address, chain } = useWallet()
   const { getRpcClient } = useRpcClient(chain.chain_name)
 
-  return useQuery<QueryAllBalancesResponse | null>({
+  return useQuery<QueryAllBalancesResponse['balances'] | null>({
     queryKey: ['balances', address, chain.chain_id],
     queryFn: async () => {
       const client = await getRpcClient()
@@ -26,26 +26,27 @@ export const useBalance = () => {
           reverse: false,
         },
       })
+      .then((res) => res.balances)
     },
     enabled: !!getRpcClient && !!address,
   })
 }
 
 export const useBalanceByAsset = (asset: Asset | null) => {
-  const { data } = useBalance()
+  const { data: balances } = useBalance()
   const { address } = useWallet()
 
   return useMemo(() => {
-    if (!data || !asset || !address) return '0'
+    if (!balances || !asset || !address) return '0'
 
-    const balance = data?.balances.find((b: any) => b.denom === asset.base)?.amount
+    const balance = balances.find((b: any) => b.denom === asset.base)?.amount
     const denom = asset.base
     const decimals = asset.decimal || 6
 
     if (!balance || !decimals || !denom) return '0'
 
     return shiftDigits(balance, -decimals).toString()
-  }, [data, asset, address])
+  }, [balances, asset, address])
 }
 
 export default useBalance

@@ -88,8 +88,10 @@ export const getDebt = (basketPositions: BasketPositionsResponse[] | undefined) 
   return shiftDigits(debt, -6).toNumber()
 }
 
-export interface Positions {
-  [key: string]: number
+export type Positions = Asset & {
+  amount: number
+  usdValue: number
+  denom: string
 }
 
 export const getTVL = (positions: Positions[]) => {
