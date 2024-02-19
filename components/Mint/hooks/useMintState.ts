@@ -1,12 +1,19 @@
-import { Asset } from '@/helpers/chain'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { AssetWithBalance } from './useComboBalance'
 
+type Summary = {
+  label: string
+  value: string
+  usdValue: string
+}
+
 type MintState = {
   assets : AssetWithBalance[]
   ltvSlider? : number
-
+  isTakeAction? : boolean
+  totalUsdValue? : number
+  summary? : Summary[]
 }
 
 type Store =  {

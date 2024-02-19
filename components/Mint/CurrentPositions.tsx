@@ -1,5 +1,4 @@
-import { TabPanel, Stack, HStack, Text } from '@chakra-ui/react'
-import React from 'react'
+import { HStack, Stack, TabPanel, Text } from '@chakra-ui/react'
 import { useCurrentPosition } from './hooks/useCurrentPosition'
 
 const CurrentPositions = () => {
@@ -8,10 +7,10 @@ const CurrentPositions = () => {
   return (
     <TabPanel>
     <Stack gap="5">
-      {stats.map(({ label, value }) => (
+      {stats.map(({ label, value, textColor = 'white' }) => (
         <HStack key={label + value} justifyContent="space-between">
           <Text variant="lable">{label}</Text>
-          <Text variant="value">{value}</Text>
+          <Text variant="value" color={textColor}>{value}</Text>
         </HStack>
       ))}
     </Stack>

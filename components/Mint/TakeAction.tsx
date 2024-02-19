@@ -1,10 +1,35 @@
 import { num } from '@/helpers/num'
-import { Stack, TabPanel } from '@chakra-ui/react'
+import { Divider, Stack, TabPanel } from '@chakra-ui/react'
 import { AssetWithSlider } from './AssetWithSlider'
 import useComboBalance, { AssetWithBalance } from './hooks/useComboBalance'
 import useMintState from './hooks/useMintState'
 
 type Props = {}
+
+const getSummary = (assets : AssetWithBalance[]) => {
+  const filderZero = assets?.filter((a) => num(a.sliderValue).isGreaterThan(0));
+  const summary = filderZero?.map((a) => {
+    return {
+      label: a.symbol,
+      value: num(a.sliderValue)
+        .times(a.comboUsdValue)
+        .dividedBy(100)
+        .dividedBy(a.price)
+        .toFixed(6),
+      usdValue: num(a.sliderValue).times(a.comboUsdValue).dividedBy(100).toFixed(2),
+    };
+  });
+
+  const totalUsdValue = summary?.reduce((acc, a) => {
+      return acc + num(a.usdValue).toNumber();
+    }, 0);
+
+    return {
+      summary,
+      totalUsdValue
+    }
+
+}
 
 const getLtv = (comboBalance: AssetWithBalance[]) => {
   return comboBalance?.reduce((acc, balance) => {
@@ -28,8 +53,10 @@ const TakeAction = (props: Props) => {
       const ratio = num(a.comboUsdValue).dividedBy(ltv).times(100).toNumber();
       return acc + num(a.sliderValue).times(ratio).dividedBy(100).dp(2).toNumber();
     }, 0);
+
+    const {summary, totalUsdValue} = getSummary(updatedAssets)
   
-    setMintState({ assets: updatedAssets, ltvSlider });
+    setMintState({ assets: updatedAssets, ltvSlider, summary, totalUsdValue});
   };
   
   const totalsliderChange = (value:number) => {
@@ -40,7 +67,9 @@ const TakeAction = (props: Props) => {
       return acc + num(value).times(ratio).dividedBy(100).dp(2).toNumber();
     }, 0);
   
-    setMintState({ assets: updatedAssets, ltvSlider });
+    const {summary, totalUsdValue} = getSummary(updatedAssets)
+
+    setMintState({ assets: updatedAssets, ltvSlider , summary, totalUsdValue});
   };
 
   return (

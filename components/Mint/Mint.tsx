@@ -38,6 +38,10 @@ const Mint = () => {
     setMintState({ assets })
   }, [comboBalance])
 
+  const onTabChange = (index: number) => {
+    setMintState({ isTakeAction: index === 1 })
+  }
+
   return (
     <Stack justifyContent="center" h="full" direction="row">
       <Card w="380px" alignItems="center" gap="12" h="max-content">
@@ -46,7 +50,13 @@ const Mint = () => {
             Mint
           </Text>
 
-          <Tabs position="relative" variant="unstyled" align="center" w="full">
+          <Tabs
+            position="relative"
+            variant="unstyled"
+            align="center"
+            w="full"
+            onChange={onTabChange}
+          >
             <TabList bg="white" borderRadius="28px" color="black" w="fit-content">
               <CustomeTab label="Current Position" />
               <CustomeTab label="Take Action" />

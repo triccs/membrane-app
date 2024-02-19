@@ -3,7 +3,7 @@ import {
   Box,
   Card, HStack, Text
 } from '@chakra-ui/react';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import useMintState from './hooks/useMintState';
 import { TxButton } from '../TxButton';
 
@@ -34,27 +34,9 @@ const SummaryItem = ({ label, value, usdValue }: SummaryItemProps) => (
 
 export const Summary = () => {
   const { mintState } = useMintState();
+  const {summary, totalUsdValue} = mintState
 
-  const parseData = useMemo(() => {
-    const filderZero = mintState?.assets?.filter((a) => num(a.sliderValue).isGreaterThan(0));
-    return filderZero?.map((a) => {
-      return {
-        label: a.symbol,
-        value: num(a.sliderValue)
-          .times(a.comboUsdValue)
-          .dividedBy(100)
-          .dividedBy(a.price)
-          .toFixed(6),
-        usdValue: num(a.sliderValue).times(a.comboUsdValue).dividedBy(100).toFixed(2),
-      };
-    });
-  }, [mintState]);
-
-  const totalUsdValue = useMemo(() => {
-    return parseData?.reduce((acc, a) => {
-      return acc + num(a.usdValue).toNumber();
-    }, 0);
-  }, [parseData]);
+  if(!mintState.isTakeAction || !summary?.length) return null;
 
   return (
     <Card h="max-content" overflow="auto" w="400px">
@@ -62,14 +44,14 @@ export const Summary = () => {
         Summary
       </Text>
 
-      {parseData?.map(({ label, value, usdValue }) => {
+      {summary?.map(({ label, value, usdValue }) => {
         return <SummaryItem key={label} label={label} value={value} usdValue={usdValue} />;
       })}
 
       <SummaryItem label="Total" value="" usdValue={totalUsdValue?.toFixed(2) || '0'} />
 
-      <Box mt="5" w="auto" alignSelf="center">
-        <TxButton>Mint</TxButton>
+      <Box mt="5" w="auto" alignSelf="center" minW="50%">
+        <TxButton isDisabled>Mint</TxButton>
       </Box>
     </Card>
   );
