@@ -23,11 +23,11 @@ const useMint = () => {
   const depositAssets = getDepositAssets(summary, comboBalance)
 
   useEffect(() => {
-    console.log({
-      comboBalance,
-      summary,
-      depositAssets,
-    })
+    // console.log({
+    //   comboBalance,
+    //   summary,
+    //   depositAssets,
+    // })
   }, [comboBalance, summary])
 }
 

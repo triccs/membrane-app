@@ -10,13 +10,7 @@ export type StakeInputProps = {
 
 export const StakeInput = ({ label, value, onChange, readOnly }: StakeInputProps) => {
   return (
-    <FormControl
-      display="flex"
-      justifyContent="space-between"
-      gap={4}
-      w="310px"
-      alignItems="center"
-    >
+    <FormControl display="flex" justifyContent="space-between" gap={4} w="auto" alignItems="center">
       <Input
         type="number"
         placeholder="0.00"

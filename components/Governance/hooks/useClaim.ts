@@ -1,6 +1,6 @@
 import useExecute from '@/hooks/useExecute'
 import useWallet from '@/hooks/useWallet'
-import { getSigningStakingClient } from '@/services/staking'
+import { getSigningStakingClient } from '@/services/governance'
 
 const useClaim = () => {
   const { address, getSigningCosmWasmClient } = useWallet()

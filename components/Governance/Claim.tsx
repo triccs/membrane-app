@@ -19,7 +19,7 @@ const Claim = () => {
   }, [staked, mbrnAsset])
 
   return (
-    <Card w="470px" p="8" alignItems="center" gap={5} h="full" justifyContent="space-between">
+    <Card w="full" p="8" alignItems="center" gap={5} h="full" justifyContent="space-between">
       <Text variant="title" fontSize="24px">
         Claim
       </Text>
