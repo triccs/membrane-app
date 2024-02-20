@@ -39,7 +39,8 @@ const Layout = ({ children }: Props) => {
   return (
     <Fragment>
       <Container
-        background="radial-gradient(66.3% 66.3% at 72.54% 59.91%, rgba(17, 16, 21, 0.00) 0%, rgba(17, 16, 21, 0.00) 42%, #111015 100%)"
+        // background="radial-gradient(66.3% 66.3% at 72.54% 59.91%, rgba(17, 16, 21, 0.00) 0%, rgba(17, 16, 21, 0.00) 42%, #111015 100%)"
+        bg="#05071B"
         as="main"
         // h="100vh"
         w="100vw"
