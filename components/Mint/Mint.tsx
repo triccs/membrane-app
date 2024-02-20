@@ -22,6 +22,7 @@ import { useCurrentPosition } from './hooks/useCurrentPosition'
 import useVaultSummary from './hooks/useVaultSummary'
 import { motion } from 'framer-motion'
 import useMint from './hooks/useMint'
+import Page from '../Page'
 
 const CustomeTab = ({ label }: { label: string }) => (
   <Tab zIndex={1} _selected={{ color: 'white' }}>
@@ -72,65 +73,67 @@ const Mint = () => {
   }, [mintState.ltvSlider])
 
   return (
-    <Stack w="full" h="full" justifyContent="center">
-      <Card w="380px" gap="12" h="max-content">
-        <VStack w="full" gap="5">
-          <Text variant="title" fontSize="24px">
-            Mint
-          </Text>
+    <Page isScrollable={false}>
+      <Stack w="full" h="full" justifyContent="center">
+        <Card w="380px" gap="12" h="max-content" px="2">
+          <VStack w="full" gap="5">
+            <Text variant="title" fontSize="24px">
+              Mint
+            </Text>
 
-          <Tabs
-            position="relative"
-            variant="unstyled"
-            align="center"
-            w="full"
-            onChange={onTabChange}
-          >
-            <TabList bg="white" borderRadius="28px" color="black" w="fit-content">
-              <CustomeTab label="Current Position" />
-              <CustomeTab label="Take Action" />
-            </TabList>
+            <Tabs
+              position="relative"
+              variant="unstyled"
+              align="center"
+              w="full"
+              onChange={onTabChange}
+            >
+              <TabList bg="white" borderRadius="28px" color="black" w="fit-content">
+                <CustomeTab label="Current Position" />
+                <CustomeTab label="Take Action" />
+              </TabList>
 
-            <TabIndicator
-              top="0"
-              position="absolute"
-              height="40px"
-              bg="#C445F0"
-              borderRadius="28px"
-            />
-            <TabPanels mt="5">
-              <CurrentPositions />
-              <TakeAction />
-            </TabPanels>
-          </Tabs>
-        </VStack>
-      </Card>
-      <Box position="absolute" left="955px" top="430px" zIndex={2} transform="scale(0.90)">
-        <Image src="/images/beaker_lines.svg" />
-      </Box>
-      <motion.div
-        style={{
-          position: 'absolute',
-          left: 833,
-          top: 760,
-          // maxHeight: 335,
-          maxHeight: `${percent}px`,
-          transform: 'scale(0.9) rotate(180deg)',
-          height: percent,
-          overflow: 'hidden',
-          transformOrigin: 'top',
-        }}
-        initial={{ height: 0 }}
-        animate={{ height: percent }}
-        transition={{ type: 'spring', stiffness: 1000 }}
-      >
-        <Image src="/images/beaker_liquid.svg" transform="rotate(180deg)" />
-      </motion.div>
-      {/* <Text>
+              <TabIndicator
+                top="0"
+                position="absolute"
+                height="40px"
+                bg="#C445F0"
+                borderRadius="28px"
+              />
+              <TabPanels mt="5">
+                <CurrentPositions />
+                <TakeAction />
+              </TabPanels>
+            </Tabs>
+          </VStack>
+        </Card>
+        <Box position="absolute" left="889px" top="391px" zIndex={2} transform="scale(0.85)">
+          <Image src="/images/beaker_lines.svg" />
+        </Box>
+        <motion.div
+          style={{
+            position: 'absolute',
+            left: 770,
+            top: 710,
+            // maxHeight: 335,
+            maxHeight: `${percent}px`,
+            transform: 'scale(0.85) rotate(180deg)',
+            height: percent,
+            overflow: 'hidden',
+            transformOrigin: 'top',
+          }}
+          initial={{ height: 0 }}
+          animate={{ height: percent }}
+          transition={{ type: 'spring', stiffness: 1000 }}
+        >
+          <Image src="/images/beaker_liquid.svg" transform="rotate(180deg)" />
+        </motion.div>
+        {/* <Text>
         {mintState.ltvSlider}-{percent}
       </Text> */}
-      {/* <Summary /> */}
-    </Stack>
+        {/* <Summary /> */}
+      </Stack>
+    </Page>
   )
 }
 

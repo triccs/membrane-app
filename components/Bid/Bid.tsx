@@ -3,16 +3,21 @@ import React from 'react'
 import PlaceBid from './PlaceBid'
 import MyBid from './MyBid'
 import Risk from './Risk'
+import Page from '../Page'
 
 type Props = {}
 
 const Bid = (props: Props) => {
   return (
-    <Stack>
-      <Risk />
-      <PlaceBid />
-      <MyBid />
-    </Stack>
+    <Page>
+      <Stack pb="10">
+        <Risk />
+        <PlaceBid />
+        <MyBid />
+        <MyBid />
+        <MyBid />
+      </Stack>
+    </Page>
   )
 }
 

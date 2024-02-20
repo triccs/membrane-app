@@ -3,6 +3,7 @@ import Info from './Info'
 import LoackdropPane from './LockdropPane'
 import LockChart from './LockChart'
 import { useIncentives, useRanking, useUserInfo } from './hooks/useLockdrop'
+import Page from '../Page'
 
 const Lockdrop = () => {
   // const { data: incentives } = useIncentives()
@@ -10,8 +11,9 @@ const Lockdrop = () => {
   // const userInfo = useUserInfo()
 
   return (
-    <HStack gap="5" justifyContent="space-around" alignItems="flex-start">
-      {/* <Card>
+    <Page>
+      <HStack gap="5" justifyContent="space-around" alignItems="flex-start">
+        {/* <Card>
         <Text>Lockdrop</Text>
         <Text> Allocation : {incentives?.amount} MBM</Text>
         <Text>{incentives?.message}</Text>
@@ -21,15 +23,16 @@ const Lockdrop = () => {
         <Button isDisabled={!incentives?.hasParticipated}>Claim</Button>
       </Card> */}
 
-      <Stack w="full" gap="5">
-        <Info />
-        <LockChart />
-      </Stack>
+        <Stack w="full" gap="5">
+          <Info />
+          <LockChart />
+        </Stack>
 
-      <Stack w="full">
-        <LoackdropPane />
-      </Stack>
-    </HStack>
+        <Stack w="full">
+          <LoackdropPane />
+        </Stack>
+      </HStack>
+    </Page>
   )
 }
 

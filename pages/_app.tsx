@@ -67,7 +67,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ChakraProvider theme={theme}>
+      <ChakraProvider resetCSS theme={theme}>
         <ChainProvider
           chains={chains}
           assetLists={assets}
@@ -94,9 +94,7 @@ const App = ({ Component, pageProps }: AppProps) => {
             },
           }}
         >
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <Component {...pageProps} />
         </ChainProvider>
       </ChakraProvider>
     </QueryClientProvider>

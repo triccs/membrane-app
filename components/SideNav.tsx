@@ -56,7 +56,7 @@ const NavItem = ({ label, href, ItemIcon }: NavItems) => {
 
 const SideNav = () => {
   return (
-    <Card w="300px" minW="240px" h="90vh">
+    <Card w="300px" minW="240px" h="90vh" position="fixed">
       <Stack as="ul" gap="2">
         <Logo />
         <Box h="10" />
