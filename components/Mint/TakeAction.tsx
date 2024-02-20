@@ -71,7 +71,7 @@ const TakeAction = (props: Props) => {
     <TabPanel>
       <Stack
         gap="5"
-        maxH="70vh"
+        maxH="35vh"
         overflowY="auto"
         w="full"
         px="3"
@@ -82,7 +82,7 @@ const TakeAction = (props: Props) => {
             backgroundColor: 'transparent', // Set background color of the scrollbar to transparent
           },
           '::-webkit-scrollbar-thumb': {
-            backgroundColor: '#05071B', // Set color of the scrollbar thumb to blue
+            backgroundColor: '#c445f0', // Set color of the scrollbar thumb to blue
             borderRadius: '6px', // Set border radius of the scrollbar thumb
           },
         }}
@@ -99,14 +99,13 @@ const TakeAction = (props: Props) => {
             />
           )
         })}
-
-        <AssetWithSlider
-          label="LTV"
-          usdValue={ltv}
-          sliderValue={mintState?.ltvSlider}
-          onChange={totalsliderChange}
-        />
       </Stack>
+      <AssetWithSlider
+        label="LTV"
+        usdValue={ltv}
+        sliderValue={mintState?.ltvSlider}
+        onChange={totalsliderChange}
+      />
     </TabPanel>
   )
 }

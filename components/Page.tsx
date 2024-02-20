@@ -43,7 +43,7 @@ const Page = ({ isScrollable = true, children }: Props) => {
       gap={6}
       m={0}
       display={['none', 'flex']}
-      h="100vh"
+      h="910px"
       overflowX="hidden"
       ml="20vw"
       bg="#05071B"
@@ -59,6 +59,7 @@ const Page = ({ isScrollable = true, children }: Props) => {
         as="main"
         p={4}
         w="1280px"
+        maxW="1280px"
         ml="300px"
         alignItems="flex-start"
         h="910px"
