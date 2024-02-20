@@ -1,5 +1,6 @@
 import { num } from '@/helpers/num'
 import {
+  Box,
   Card,
   Stack,
   Tab,
@@ -9,13 +10,18 @@ import {
   Tabs,
   Text,
   VStack,
+  Image,
 } from '@chakra-ui/react'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import CurrentPositions from './CurrentPositions'
 import { Summary } from './Summary'
 import TakeAction from './TakeAction'
 import useComboBalance from './hooks/useComboBalance'
 import useMintState from './hooks/useMintState'
+import { useCurrentPosition } from './hooks/useCurrentPosition'
+import useVaultSummary from './hooks/useVaultSummary'
+import { motion } from 'framer-motion'
+import useMint from './hooks/useMint'
 
 const CustomeTab = ({ label }: { label: string }) => (
   <Tab zIndex={1} _selected={{ color: 'white' }}>
@@ -24,8 +30,10 @@ const CustomeTab = ({ label }: { label: string }) => (
 )
 
 const Mint = () => {
-  const { setMintState } = useMintState()
+  const { setMintState, mintState } = useMintState()
   const comboBalance = useComboBalance()
+
+  const mint = useMint()
 
   useEffect(() => {
     const assets = comboBalance
@@ -42,9 +50,30 @@ const Mint = () => {
     setMintState({ isTakeAction: index === 1 })
   }
 
+  // const getPercent = (value: number) => {
+  //   switch (true) {
+  //     case value < 5:
+  //       return value * 2.55
+  //     case value > 5 && value < 10:
+  //       return value * 2.53
+  //     case value > 10 && value < 25:
+  //       return value * 1.51
+  //       // default:
+  //       return 0
+  //   }
+  // }
+
+  const percent = useMemo(() => {
+    const value = num(mintState.ltvSlider).isLessThan(5)
+      ? num(mintState.ltvSlider).times(2.6)
+      : num(mintState.ltvSlider).plus(15)
+    // const value = getPercent(mintState.ltvSlider || 0)
+    return num(value).times(335).div(100).toNumber()
+  }, [mintState.ltvSlider])
+
   return (
-    <Stack justifyContent="center" h="full" direction="row">
-      <Card w="380px" alignItems="center" gap="12" h="max-content">
+    <Stack w="full" h="full" justifyContent="center">
+      <Card w="380px" gap="12" h="max-content">
         <VStack w="full" gap="5">
           <Text variant="title" fontSize="24px">
             Mint
@@ -76,7 +105,31 @@ const Mint = () => {
           </Tabs>
         </VStack>
       </Card>
-      <Summary />
+      <Box position="absolute" left="955px" top="430px" zIndex={2} transform="scale(0.90)">
+        <Image src="/images/beaker_lines.svg" />
+      </Box>
+      <motion.div
+        style={{
+          position: 'absolute',
+          left: 833,
+          top: 760,
+          // maxHeight: 335,
+          maxHeight: `${percent}px`,
+          transform: 'scale(0.9) rotate(180deg)',
+          height: percent,
+          overflow: 'hidden',
+          transformOrigin: 'top',
+        }}
+        initial={{ height: 0 }}
+        animate={{ height: percent }}
+        transition={{ type: 'spring', stiffness: 1000 }}
+      >
+        <Image src="/images/beaker_liquid.svg" transform="rotate(180deg)" />
+      </motion.div>
+      {/* <Text>
+        {mintState.ltvSlider}-{percent}
+      </Text> */}
+      {/* <Summary /> */}
     </Stack>
   )
 }

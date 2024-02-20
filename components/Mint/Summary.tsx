@@ -1,11 +1,8 @@
-import { num } from '@/helpers/num';
-import {
-  Box,
-  Card, HStack, Text
-} from '@chakra-ui/react';
-import React, { useEffect, useMemo } from 'react';
-import useMintState from './hooks/useMintState';
-import { TxButton } from '../TxButton';
+import { num } from '@/helpers/num'
+import { Box, Card, HStack, Text } from '@chakra-ui/react'
+import React, { useEffect, useMemo } from 'react'
+import useMintState from './hooks/useMintState'
+import { TxButton } from '../TxButton'
 
 type SummaryItemProps = {
   label: string
@@ -33,19 +30,19 @@ const SummaryItem = ({ label, value, usdValue }: SummaryItemProps) => (
 )
 
 export const Summary = () => {
-  const { mintState } = useMintState();
-  const {summary, totalUsdValue} = mintState
+  const { mintState } = useMintState()
+  const { summary, totalUsdValue } = mintState
 
-  if(!mintState.isTakeAction || !summary?.length) return null;
+  if (!mintState.isTakeAction || !summary?.length) return null
 
   return (
-    <Card h="max-content" overflow="auto" w="400px">
+    <Card h="max-content" overflow="auto" w="400px" zIndex="5">
       <Text variant="title" fontSize="24px">
         Summary
       </Text>
 
       {summary?.map(({ label, value, usdValue }) => {
-        return <SummaryItem key={label} label={label} value={value} usdValue={usdValue} />;
+        return <SummaryItem key={label} label={label} value={value} usdValue={usdValue} />
       })}
 
       <SummaryItem label="Total" value="" usdValue={totalUsdValue?.toFixed(2) || '0'} />
@@ -54,5 +51,5 @@ export const Summary = () => {
         <TxButton isDisabled>Mint</TxButton>
       </Box>
     </Card>
-  );
-};
+  )
+}
