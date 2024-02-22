@@ -1,7 +1,7 @@
 FROM node:18-alpine AS build
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json yarn.lock tsconfig.json ./
+COPY package.json tsconfig.json ./
 # COPY . .
 RUN yarn install
 RUN yarn build
