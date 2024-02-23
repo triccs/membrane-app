@@ -3,7 +3,7 @@ import { SliderWithState } from './SliderWithState'
 
 export type AssetWithSliderProps = {
   label: string
-  value?: number
+  value?: number | string
   usdValue?: number
   sliderValue?: number
   onChange: (value: number) => void

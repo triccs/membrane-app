@@ -1,14 +1,16 @@
 import { num } from '@/helpers/num'
 import { Box, Button, Divider, HStack, Stack, TabPanel } from '@chakra-ui/react'
 import { AssetWithSlider } from './AssetWithSlider'
-import useCombinBalance from './hooks/useCombinBalance'
+import useCombinBalance, { AssetWithBalance } from './hooks/useCombinBalance'
 import useMintState from './hooks/useMintState'
 import useVaultSummary from './hooks/useVaultSummary'
 import { GrPowerReset } from 'react-icons/gr'
 import { getSummary, setInitialMintState } from '@/helpers/mint'
 
 const TakeAction = () => {
-  const { mintState, setMintState, reset } = useMintState()
+  const { mintState, setMintState } = useMintState()
+  const combinBalance = useCombinBalance()
+
   const {
     tvl,
     borrowLTV,
@@ -17,7 +19,6 @@ const TakeAction = () => {
     originalTVL = 0,
     debtAmount,
   } = useVaultSummary()
-  const combinBalance = useCombinBalance()
 
   const sliderChange = (value: number, symbol: string) => {
     const updatedAssets = mintState.assets.map((asset) => {
@@ -40,28 +41,8 @@ const TakeAction = () => {
     setMintState({ assets: updatedAssets, summary, totalUsdValue })
   }
 
-  const totalsliderChange = (ltvSlider: number) => {
-    const originalLtvAmount = num(originalLTV).times(originalTVL).dividedBy(100).toNumber()
-    const maxLtv = num(borrowLTV).times(tvl).dividedBy(100).toNumber()
-    const newLtv = num(ltvSlider).times(maxLtv).dividedBy(100).toNumber()
-    const diff = num(originalLtvAmount).minus(newLtv).abs().toNumber()
-    const repay = num(newLtv).isLessThan(originalLtvAmount) ? diff : 0
-    const mint = num(originalLtvAmount).isLessThan(newLtv) ? diff : 0
-
-    setMintState({ ltvSlider, mint, repay })
-  }
-
-  const onRest = () => {
-    setInitialMintState({
-      combinBalance,
-      ltv: originalLTV,
-      borrowLTV: originalBorrowLTV,
-      setMintState,
-    })
-  }
-
-  return (
-    <TabPanel>
+  const AllAssets = ({ assets = [] }: { assets: AssetWithBalance[] }) => {
+    return (
       <Stack
         gap="5"
         maxH="75vh"
@@ -86,13 +67,39 @@ const TakeAction = () => {
               key={asset?.base}
               label={asset?.symbol}
               value={asset.amount}
-              // usdValue={asset?.amountValue || 0}
               sliderValue={asset.sliderValue}
               onChange={(v: number) => sliderChange(v, asset?.symbol)}
             />
           )
         })}
       </Stack>
+    )
+  }
+
+  const totalsliderChange = (ltvSlider: number) => {
+    const originalLtvAmount = num(originalLTV).times(originalTVL).dividedBy(100).toNumber()
+    const maxLtv = num(borrowLTV).times(tvl).dividedBy(100).toNumber()
+    const newLtv = num(ltvSlider).times(maxLtv).dividedBy(100).toNumber()
+    const diff = num(originalLtvAmount).minus(newLtv).abs().toNumber()
+    const repay = num(newLtv).isLessThan(originalLtvAmount) ? diff : 0
+    const mint = num(originalLtvAmount).isLessThan(newLtv) ? diff : 0
+
+    setMintState({ ltvSlider, mint, repay })
+  }
+
+  const onRest = () => {
+    setInitialMintState({
+      combinBalance,
+      ltv: originalLTV,
+      borrowLTV: originalBorrowLTV,
+      setMintState,
+    })
+  }
+
+  return (
+    <TabPanel>
+      <AllAssets assets={mintState?.assets} />
+
       <Divider
         bg="rgba(226, 216, 218, 0.24)"
         boxShadow="0px 0px 8px 0px rgba(226, 216, 218, 0.64)"
@@ -101,6 +108,7 @@ const TakeAction = () => {
         my="5"
         mx="3"
       />
+
       <Box px="3">
         <AssetWithSlider
           label="Mintable LTV"
@@ -112,6 +120,7 @@ const TakeAction = () => {
           onChange={totalsliderChange}
         />
       </Box>
+
       <HStack mt="5" gap="4">
         <Button>Open</Button>
         <Button variant="ghost" leftIcon={<GrPowerReset />} onClick={onRest}>

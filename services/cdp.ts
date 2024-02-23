@@ -11,7 +11,6 @@ import getCosmWasmClient from '@/helpers/comswasmClient'
 import { shiftDigits } from '@/helpers/math'
 import { Price } from './oracle'
 import { num } from '@/helpers/num'
-import { get } from 'http'
 
 export const cdpClient = async () => {
   const cosmWasmClient = await getCosmWasmClient()
@@ -207,12 +206,6 @@ export const getBorrowLTV = (
   basketAssets: BasketAsset[] = [],
 ) => {
   const positionsWithRatio = getAssetRatio(tvl, positions)
-
-  console.log({
-    tvl,
-    positions,
-  })
-
   const maxBorrowLTV = positionsWithRatio.reduce((acc, position) => {
     const ltv =
       basketAssets.find((asset) => asset?.asset?.base === position.denom)?.maxBorrowLTV || 0
@@ -285,6 +278,7 @@ type VaultSummary = {
   basketPositions?: BasketPositionsResponse[]
   prices?: Price[]
   newDeposit: number
+  summary?: any[]
 }
 
 const updatedSummary = (summary: any, basketPositions: any, prices: any) => {
@@ -339,12 +333,6 @@ export const calculateVaultSummary = ({
   const liqudationLTV = getLiqudationLTV(tvl, positions, basketAssets)
   const borrowLTV = getBorrowLTV(tvl, positions, basketAssets)
   const originalBorrowLTV = getBorrowLTV(originalTVL, originalPositions, basketAssets)
-
-  console.log({
-    basketAssets,
-    positions,
-    originalTVL,
-  })
 
   const mintAmount = getMintAmount({
     tvl,
