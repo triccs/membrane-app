@@ -1,22 +1,26 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import { AssetWithBalance } from './useComboBalance'
+import { AssetWithBalance } from './useCombinBalance'
 
 type Summary = {
   label: string
-  value: string
+  value: string | number
   usdValue: string
+  currentDeposit: string | number
+  newDepositWillBe: string
 }
 
 type MintState = {
-  assets : AssetWithBalance[]
-  ltvSlider? : number
-  isTakeAction? : boolean
-  totalUsdValue? : number
-  summary? : Summary[]
+  assets: AssetWithBalance[]
+  ltvSlider?: number
+  isTakeAction?: boolean
+  totalUsdValue?: number
+  summary?: Summary[]
+  mint?: number
+  repay?: number
 }
 
-type Store =  {
+type Store = {
   mintState: MintState
   setMintState: (partialState: Partial<MintState>) => void
   reset: () => void
@@ -24,7 +28,7 @@ type Store =  {
 
 const initialState: MintState = {
   assets: [],
-  ltvSlider: 0
+  ltvSlider: 0,
 }
 
 type Config = {
@@ -40,7 +44,7 @@ const store = (set) => ({
       false,
       `@update/${Object.keys(partialState).join(',')}`,
     ),
-  reset: () => set((state: Store) => ({ ...state, ...initialState }), false, '@reset'),
+  reset: () => set((state: Store) => ({ ...state, mintState: initialState }), false, '@reset'),
 })
 
 const useMintState = create<Store>(devtools(store, { name: 'mintState' }))

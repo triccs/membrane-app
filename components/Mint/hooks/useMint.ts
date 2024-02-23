@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
-import useComboBalance from './useComboBalance'
+import useCombinBalance from './useCombinBalance'
 import useMintState from './useMintState'
 import { num } from '@/helpers/num'
 
 // loop through summary then dedeuct the summary walletBalance
-const getDepositAssets = (summary: any, comboBalance: any) => {
+const getDepositAssets = (summary: any, combinBalance: any) => {
   return summary?.map((s: any) => {
-    const asset = comboBalance.find((a: any) => a.label === s.symbol)
+    const asset = combinBalance.find((a: any) => a.label === s.symbol)
     const deposit = num(s.value).minus(asset?.walletsdValue).toString()
     return {
       ...s,
@@ -16,19 +16,13 @@ const getDepositAssets = (summary: any, comboBalance: any) => {
 }
 
 const useMint = () => {
-  const comboBalance = useComboBalance()
+  const combinBalance = useCombinBalance()
   const { mintState } = useMintState()
   const { summary } = mintState
 
-  const depositAssets = getDepositAssets(summary, comboBalance)
+  const depositAssets = getDepositAssets(summary, combinBalance)
 
-  useEffect(() => {
-    // console.log({
-    //   comboBalance,
-    //   summary,
-    //   depositAssets,
-    // })
-  }, [comboBalance, summary])
+  useEffect(() => {}, [combinBalance, summary])
 }
 
 export default useMint

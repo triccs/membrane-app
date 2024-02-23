@@ -1,11 +1,5 @@
-import {
-  Slider,
-  SliderFilledTrack,
-  SliderThumb,
-  SliderTrack
-} from '@chakra-ui/react';
-import React from 'react';
-
+import { Slider, SliderFilledTrack, SliderThumb, SliderTrack } from '@chakra-ui/react'
+import React from 'react'
 
 export type SliderProps = {
   value: number
@@ -27,5 +21,5 @@ export const SliderWithState = ({ value, onChange }: SliderProps) => {
       </SliderTrack>
       <SliderThumb boxSize={6} bg="#C445F0" cursor="grab" border="2px solid #E2D8DA" />
     </Slider>
-  );
-};
+  )
+}

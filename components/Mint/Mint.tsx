@@ -2,6 +2,7 @@ import { num } from '@/helpers/num'
 import {
   Box,
   Card,
+  Image,
   Stack,
   Tab,
   TabIndicator,
@@ -10,19 +11,17 @@ import {
   Tabs,
   Text,
   VStack,
-  Image,
 } from '@chakra-ui/react'
+import { motion } from 'framer-motion'
 import { useEffect, useMemo } from 'react'
+import Page from '../Page'
 import CurrentPositions from './CurrentPositions'
 import { Summary } from './Summary'
 import TakeAction from './TakeAction'
-import useComboBalance from './hooks/useComboBalance'
+import useCombinBalance from './hooks/useCombinBalance'
 import useMintState from './hooks/useMintState'
-import { useCurrentPosition } from './hooks/useCurrentPosition'
 import useVaultSummary from './hooks/useVaultSummary'
-import { motion } from 'framer-motion'
-import useMint from './hooks/useMint'
-import Page from '../Page'
+import { calcuateMintAndRepay, setInitialMintState } from '@/helpers/mint'
 
 const CustomeTab = ({ label }: { label: string }) => (
   <Tab zIndex={1} _selected={{ color: 'white' }}>
@@ -32,44 +31,39 @@ const CustomeTab = ({ label }: { label: string }) => (
 
 const Mint = () => {
   const { setMintState, mintState } = useMintState()
-  const comboBalance = useComboBalance()
+  const combinBalance = useCombinBalance()
+  const { ltv, borrowLTV, originalLTV, originalTVL, tvl, debtAmount } = useVaultSummary()
 
-  const mint = useMint()
+  // const mint = useMint()
 
   useEffect(() => {
-    const assets = comboBalance
-      ?.filter((balace) => num(balace.comboUsdValue || 0).isGreaterThan(1))
-      .map((balance) => ({
-        ...balance,
-        sliderValue: 0,
-      }))
+    // need to set initial state when combin balance is ready
+    setInitialMintState({ combinBalance, ltv, borrowLTV, setMintState })
+  }, [combinBalance])
 
-    setMintState({ assets })
-  }, [comboBalance])
+  useEffect(() => {
+    // need to recalculate mint and repay when ltv or borrowLTV changes
+    const ltvSlider = num(ltv).times(100).dividedBy(borrowLTV).toNumber()
+
+    const { mint, repay } = calcuateMintAndRepay(
+      ltvSlider,
+      originalLTV || 0,
+      originalTVL,
+      borrowLTV,
+      tvl,
+      debtAmount,
+    )
+    setMintState({ ltvSlider, mint, repay })
+  }, [ltv, borrowLTV])
 
   const onTabChange = (index: number) => {
     setMintState({ isTakeAction: index === 1 })
   }
 
-  // const getPercent = (value: number) => {
-  //   switch (true) {
-  //     case value < 5:
-  //       return value * 2.55
-  //     case value > 5 && value < 10:
-  //       return value * 2.53
-  //     case value > 10 && value < 25:
-  //       return value * 1.51
-  //       // default:
-  //       return 0
-  //   }
-  // }
-
   const percent = useMemo(() => {
-    const value = num(mintState.ltvSlider).isLessThan(5)
-      ? num(mintState.ltvSlider).times(2.6)
-      : num(mintState.ltvSlider).plus(15)
-    // const value = getPercent(mintState.ltvSlider || 0)
-    return num(value).times(335).div(100).toNumber()
+    const ltvSlider = mintState?.ltvSlider || 0
+    const value = num(ltvSlider).isLessThan(5) ? num(ltvSlider).times(2.6) : num(ltvSlider)
+    return num(value).times(336).div(100).toNumber()
   }, [mintState.ltvSlider])
 
   return (
@@ -89,7 +83,7 @@ const Mint = () => {
               onChange={onTabChange}
             >
               <TabList bg="white" borderRadius="28px" color="black" w="fit-content">
-                <CustomeTab label="Current Position" />
+                <CustomeTab label="Position info" />
                 <CustomeTab label="Take Action" />
               </TabList>
 
@@ -110,28 +104,26 @@ const Mint = () => {
         <Box position="absolute" left="889px" top="391px" zIndex={2} transform="scale(0.85)">
           <Image src="/images/beaker_lines.svg" />
         </Box>
-        <motion.div
-          style={{
-            position: 'absolute',
-            left: 770,
-            top: 710,
-            // maxHeight: 335,
-            maxHeight: `${percent}px`,
-            transform: 'scale(0.85) rotate(180deg)',
-            height: percent,
-            overflow: 'hidden',
-            transformOrigin: 'top',
-          }}
-          initial={{ height: 0 }}
-          animate={{ height: percent }}
-          transition={{ type: 'spring', stiffness: 1000 }}
-        >
-          <Image src="/images/beaker_liquid.svg" transform="rotate(180deg)" />
-        </motion.div>
-        {/* <Text>
-        {mintState.ltvSlider}-{percent}
-      </Text> */}
-        {/* <Summary /> */}
+        {isNaN(percent) ? null : (
+          <motion.div
+            style={{
+              position: 'absolute',
+              left: 770,
+              top: 710,
+              maxHeight: percent,
+              transform: 'scale(0.85) rotate(180deg)',
+              height: percent,
+              overflow: 'hidden',
+              transformOrigin: 'top',
+            }}
+            initial={{ height: 0 }}
+            animate={{ height: percent }}
+            transition={{ type: 'spring', stiffness: 1000 }}
+          >
+            <Image src="/images/beaker_liquid.svg" transform="rotate(180deg)" />
+          </motion.div>
+        )}
+        <Summary />
       </Stack>
     </Page>
   )
