@@ -9,8 +9,10 @@ on:
 jobs:
 
   build:
-
+    name: Build and Push Docker Image
     runs-on: ubuntu-latest
+    env:
+      IMG_NAME: ${{ github.repository }}
 
     steps:
       - name: Docker metadata
