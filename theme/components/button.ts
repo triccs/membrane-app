@@ -9,6 +9,7 @@ export const Button: ComponentStyleConfig = {
     py: 2,
     px: 3,
     w: 'full',
+    cursor: 'pointer',
   },
   variants: {
     solid: {

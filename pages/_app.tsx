@@ -87,8 +87,8 @@ const App = ({ Component, pageProps }: AppProps) => {
               // }
               osmosis: {
                 rpc: [
-                  // 'https://g.w.lavanet.xyz:443/gateway/cos3/rpc-http/bb6d2019c50124ec4fdb78498bc50573',
-                  'https://rpc.margined.io',
+                  'https://g.w.lavanet.xyz:443/gateway/cos3/rpc-http/bb6d2019c50124ec4fdb78498bc50573',
+                  // 'https://rpc.margined.io',
                 ],
               },
             },

@@ -15,10 +15,35 @@ import React, { PropsWithChildren } from 'react'
 import { TxButton } from '../TxButton'
 import LoaderWithIcon from '../LoaderWithIcon'
 import { Action } from '@/types/tx'
+import { LoadingContent } from './LoadingContent'
+import ConfrimDetails from './ConfrimDetails'
+import { TxDetails } from './TxDetails'
 
 type Props = PropsWithChildren & {
   label: string
   action?: Action
+}
+
+const mockSuccess = {
+  tx: {
+    isSuccess: true,
+    data: {
+      code: 0,
+      gasUsed: 900909,
+      transactionHash: '7D8DBC214C1888267A48EEE325EADC6F58D765C3D03D0868D82A3650F3AECB9E',
+    },
+  },
+}
+
+const mockLoading = {
+  tx: {
+    isSuccess: true,
+    data: {
+      code: 0,
+      gasUsed: 900909,
+      transactionHash: '7D8DBC214C1888267A48EEE325EADC6F58D765C3D03D0868D82A3650F3AECB9E',
+    },
+  },
 }
 
 const ConfirmModal = ({ children, label = 'Open', action }: Props) => {
@@ -35,35 +60,9 @@ const ConfirmModal = ({ children, label = 'Open', action }: Props) => {
 
       <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} isCentered size="xl">
         <ModalOverlay />
-        <ModalContent>
-          {/* <Stack w="140px" h="140px" my="16" alignItems="center" w="full">
-            <LoaderWithIcon />
-            <Text color="white" fontSize="xs" fontWeight="normal">
-              Broadcasting
-            </Text>
-          </Stack> */}
-          <ModalHeader>
-            <Text variant="title" fontSize="24px">
-              Confirm transaction
-            </Text>
-            <Text color="white" fontSize="xs" fontWeight="normal">
-              Please review your transaction.
-            </Text>
-          </ModalHeader>
-          <ModalCloseButton />
-
-          <ModalBody>{children}</ModalBody>
-
-          <ModalFooter justifyContent="center">
-            <TxButton
-              isLoading={action?.simulate.isLoading || action?.tx.isPending}
-              isDisabled={action?.simulate.isError || !action?.simulate.data}
-              onClick={() => action?.tx.mutate()}
-            >
-              Confirm
-            </TxButton>
-          </ModalFooter>
-        </ModalContent>
+        <LoadingContent action={action} />
+        <ConfrimDetails action={action}>{children}</ConfrimDetails>
+        <TxDetails action={action} onClose={onClose} />
       </Modal>
     </>
   )
