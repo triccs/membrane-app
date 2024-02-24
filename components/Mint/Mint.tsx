@@ -17,11 +17,11 @@ import { useEffect, useMemo } from 'react'
 import Page from '../Page'
 import CurrentPositions from './CurrentPositions'
 import { Summary } from './Summary'
-import TakeAction from './TakeAction'
 import useCombinBalance from './hooks/useCombinBalance'
 import useMintState from './hooks/useMintState'
 import useVaultSummary from './hooks/useVaultSummary'
 import { calcuateMintAndRepay, setInitialMintState } from '@/helpers/mint'
+import TakeAction from './TakeAction'
 
 const CustomeTab = ({ label }: { label: string }) => (
   <Tab zIndex={1} _selected={{ color: 'white' }}>
@@ -32,9 +32,7 @@ const CustomeTab = ({ label }: { label: string }) => (
 const Mint = () => {
   const { setMintState, mintState } = useMintState()
   const combinBalance = useCombinBalance()
-  const { ltv, borrowLTV, originalLTV, originalTVL, tvl, debtAmount } = useVaultSummary()
-
-  // const mint = useMint()
+  const { ltv, borrowLTV, originalLTV = 0, originalTVL = 0, tvl, debtAmount } = useVaultSummary()
 
   useEffect(() => {
     // need to set initial state when combin balance is ready
@@ -47,7 +45,7 @@ const Mint = () => {
 
     const { mint, repay } = calcuateMintAndRepay(
       ltvSlider,
-      originalLTV || 0,
+      originalLTV,
       originalTVL,
       borrowLTV,
       tvl,
@@ -123,7 +121,6 @@ const Mint = () => {
             <Image src="/images/beaker_liquid.svg" transform="rotate(180deg)" />
           </motion.div>
         )}
-        <Summary />
       </Stack>
     </Page>
   )

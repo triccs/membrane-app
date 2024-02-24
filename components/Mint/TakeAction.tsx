@@ -1,15 +1,19 @@
+import TxError from '@/components/TxError'
+import { setInitialMintState } from '@/helpers/mint'
 import { num } from '@/helpers/num'
-import { Box, Button, Divider, HStack, Stack, TabPanel } from '@chakra-ui/react'
+import { Box, Divider, TabPanel } from '@chakra-ui/react'
+import ActionButtons from './ActionButtons'
 import { AssetWithSlider } from './AssetWithSlider'
-import useCombinBalance, { AssetWithBalance } from './hooks/useCombinBalance'
+import CollateralAssets from './CollateralAssets'
+import useCombinBalance from './hooks/useCombinBalance'
+import useMint from './hooks/useMint'
 import useMintState from './hooks/useMintState'
 import useVaultSummary from './hooks/useVaultSummary'
-import { GrPowerReset } from 'react-icons/gr'
-import { getSummary, setInitialMintState } from '@/helpers/mint'
 
 const TakeAction = () => {
   const { mintState, setMintState } = useMintState()
   const combinBalance = useCombinBalance()
+  const mint = useMint()
 
   const {
     tvl,
@@ -19,62 +23,6 @@ const TakeAction = () => {
     originalTVL = 0,
     debtAmount,
   } = useVaultSummary()
-
-  const sliderChange = (value: number, symbol: string) => {
-    const updatedAssets = mintState.assets.map((asset) => {
-      const sliderValue = asset.symbol === symbol ? value : asset.sliderValue
-      const amount = num(sliderValue)
-        .times(asset.combinUsdValue)
-        .dividedBy(100)
-        .dividedBy(asset.price)
-        .toFixed(6)
-      const amountValue = num(amount).times(asset.price).toNumber()
-      return {
-        ...asset,
-        amount,
-        amountValue,
-        sliderValue,
-      }
-    })
-
-    const { summary, totalUsdValue } = getSummary(updatedAssets)
-    setMintState({ assets: updatedAssets, summary, totalUsdValue })
-  }
-
-  const AllAssets = ({ assets = [] }: { assets: AssetWithBalance[] }) => {
-    return (
-      <Stack
-        gap="5"
-        maxH="75vh"
-        overflowY="auto"
-        w="full"
-        px="3"
-        css={{
-          // Customize scrollbar appearance
-          '::-webkit-scrollbar': {
-            width: '6px', // Set width of the scrollbar
-            backgroundColor: 'transparent', // Set background color of the scrollbar to transparent
-          },
-          '::-webkit-scrollbar-thumb': {
-            backgroundColor: '#05071B', // Set color of the scrollbar thumb to blue
-            borderRadius: '6px', // Set border radius of the scrollbar thumb
-          },
-        }}
-      >
-        {mintState?.assets?.map((asset) => {
-          return (
-            <AssetWithSlider
-              key={asset?.base}
-              label={asset?.symbol}
-              value={asset.amount}
-              sliderValue={asset.sliderValue}
-              onChange={(v: number) => sliderChange(v, asset?.symbol)}
-            />
-          )
-        })}
-      </Stack>
-    )
-  }
 
   const totalsliderChange = (ltvSlider: number) => {
     const originalLtvAmount = num(originalLTV).times(originalTVL).dividedBy(100).toNumber()
@@ -98,7 +46,7 @@ const TakeAction = () => {
 
   return (
     <TabPanel>
-      <AllAssets assets={mintState?.assets} />
+      <CollateralAssets />
 
       <Divider
         bg="rgba(226, 216, 218, 0.24)"
@@ -121,12 +69,8 @@ const TakeAction = () => {
         />
       </Box>
 
-      <HStack mt="5" gap="4">
-        <Button>Open</Button>
-        <Button variant="ghost" leftIcon={<GrPowerReset />} onClick={onRest}>
-          Reset
-        </Button>
-      </HStack>
+      <ActionButtons onRest={onRest} />
+      <TxError action={mint} />
     </TabPanel>
   )
 }

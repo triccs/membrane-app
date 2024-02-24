@@ -17,12 +17,12 @@ export const getAssetLogo = (asset: RegistryAsset) => {
 const assetWithLogo = (asset: RegistryAsset) => ({
   ...asset,
   logo: getAssetLogo(asset),
-  decimal: getExponentByDenom(registryAssets, asset.base, defaultChain)
+  decimal: getExponentByDenom(registryAssets, asset.base, defaultChain),
 })
 
 export const getChainAssets = () => {
   const chainAssets = registryAssets.find((asset) => asset.chain_name === defaultChain)
-  
+
   return chainAssets?.assets?.map(assetWithLogo)
 }
 export const getAssets = () => {

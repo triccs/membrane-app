@@ -53,6 +53,7 @@ const Page = ({ isScrollable = true, children }: Props) => {
       backgroundRepeat="no-repeat"
       p="2"
       overflowY={isScrollable ? 'auto' : 'hidden'}
+      width={isScrollable ? '100%' : '1280px'}
     >
       <SideNav />
       <Stack

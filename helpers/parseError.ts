@@ -8,6 +8,8 @@ export const parseError = (error: Error) => {
     { regex: /no liquidity in pool/i, message: 'No liquidity available' },
     { regex: /token amount calculated/i, message: 'Try increasing slippage' },
     { regex: /Must stake at least 1 MBRN/i, message: 'Must stake at least 1 MBRN' },
+    { regex: /is below minimum/i, message: 'Minimum 100 CDT to mint' },
+    { regex: /invalid coin/i, message: 'Invalid coins provided' },
   ]
 
   const errorMessage = error?.message || ''

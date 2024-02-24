@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { AssetWithBalance } from './useCombinBalance'
 
-type Summary = {
+export type Summary = AssetWithBalance & {
   label: string
   value: string | number
   usdValue: string

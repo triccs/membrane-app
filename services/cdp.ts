@@ -321,8 +321,8 @@ export const calculateVaultSummary = ({
 
   const positions = updatedSummary(summary, basketPositions, prices)
   const originalPositions = getPositions(basketPositions, prices)
-  // const debtAmount = getDebt(basketPositions)
-  const debtAmount = 50
+  const debtAmount = getDebt(basketPositions)
+  // const debtAmount = 50
   const basketAssets = getBasketAssets(basket!, collateralInterest!)
   const originalTVL = getTVL(originalPositions)
   const tvl = originalTVL + newDeposit

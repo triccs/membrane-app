@@ -1,16 +1,23 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Text } from '@chakra-ui/react'
+import { parseError } from '@/helpers/parseError'
+import { Action } from '@/types/tx'
 
 type Props = {
-  isError: boolean
-  errorMessage: string | null
+  action: Action
 }
 
-const TxError = ({ isError, errorMessage }: Props) => {
+const TxError = ({ action }: Props) => {
+  const { isError, error } = action?.simulate
   if (!isError) return null
 
+  const errorMessage = useMemo(() => {
+    if (!error) return null
+    return parseError(error)
+  }, [error])
+
   return (
-    <Text size="xs" color="red">
+    <Text fontSize="sm" color="red.500" mt="2">
       {errorMessage}
     </Text>
   )
