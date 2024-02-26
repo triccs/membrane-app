@@ -1,10 +1,13 @@
-import Stake from '@/components/Governance'
+import Governance from '@/components/Governance'
+import Page from '@/components/Page'
 import React from 'react'
 
-type Props = {}
-
-const GovernancePage = (props: Props) => {
-  return <Stake />
+const GovernancePage = () => {
+  return (
+    <Page>
+      <Governance />
+    </Page>
+  )
 }
 
 export default GovernancePage

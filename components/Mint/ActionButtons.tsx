@@ -13,10 +13,6 @@ type Props = {
 const ActionButtons = ({ onRest }: Props) => {
   const mint = useMint()
 
-  console.log({
-    mint,
-  })
-
   return (
     <HStack mt="5" gap="4">
       <ConfirmModal label="Open" action={mint}>

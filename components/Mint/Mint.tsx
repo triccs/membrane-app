@@ -22,6 +22,8 @@ import useMintState from './hooks/useMintState'
 import useVaultSummary from './hooks/useVaultSummary'
 import { calcuateMintAndRepay, setInitialMintState } from '@/helpers/mint'
 import TakeAction from './TakeAction'
+import useWallet from '@/hooks/useWallet'
+import LockedAccess from '@/components/LockedAccess'
 
 const CustomeTab = ({ label }: { label: string }) => (
   <Tab zIndex={1} _selected={{ color: 'white' }}>
@@ -65,64 +67,62 @@ const Mint = () => {
   }, [mintState.ltvSlider])
 
   return (
-    <Page isScrollable={false}>
-      <Stack w="full" h="full" justifyContent="center">
-        <Card w="380px" gap="12" h="max-content" px="2">
-          <VStack w="full" gap="5">
-            <Text variant="title" fontSize="24px">
-              Mint
-            </Text>
+    <Stack w="full" h="full" justifyContent="center">
+      <Card w="380px" gap="12" h="max-content" px="2">
+        <VStack w="full" gap="5">
+          <Text variant="title" fontSize="24px">
+            Mint
+          </Text>
 
-            <Tabs
-              position="relative"
-              variant="unstyled"
-              align="center"
-              w="full"
-              onChange={onTabChange}
-            >
-              <TabList bg="white" borderRadius="28px" color="black" w="fit-content">
-                <CustomeTab label="Position info" />
-                <CustomeTab label="Take Action" />
-              </TabList>
-
-              <TabIndicator
-                top="0"
-                position="absolute"
-                height="40px"
-                bg="#C445F0"
-                borderRadius="28px"
-              />
-              <TabPanels mt="5">
-                <CurrentPositions />
-                <TakeAction />
-              </TabPanels>
-            </Tabs>
-          </VStack>
-        </Card>
-        <Box position="absolute" left="889px" top="391px" zIndex={2} transform="scale(0.85)">
-          <Image src="/images/beaker_lines.svg" />
-        </Box>
-        {isNaN(percent) ? null : (
-          <motion.div
-            style={{
-              position: 'absolute',
-              left: 770,
-              top: 710,
-              maxHeight: percent,
-              transform: 'scale(0.85) rotate(180deg)',
-              height: percent,
-              overflow: 'hidden',
-              transformOrigin: 'top',
-            }}
-            initial={{ height: 0 }}
-            animate={{ height: percent }}
-            transition={{ type: 'spring', stiffness: 1000 }}
+          <Tabs
+            position="relative"
+            variant="unstyled"
+            align="center"
+            w="full"
+            onChange={onTabChange}
           >
-            <Image src="/images/beaker_liquid.svg" transform="rotate(180deg)" />
-          </motion.div>
-        )}
-      </Stack>
-    </Page>
+            <TabList bg="white" borderRadius="28px" color="black" w="fit-content">
+              <CustomeTab label="Position info" />
+              <CustomeTab label="Take Action" />
+            </TabList>
+
+            <TabIndicator
+              top="0"
+              position="absolute"
+              height="40px"
+              bg="#C445F0"
+              borderRadius="28px"
+            />
+            <TabPanels mt="5">
+              <CurrentPositions />
+              <TakeAction />
+            </TabPanels>
+          </Tabs>
+        </VStack>
+      </Card>
+      <Box position="absolute" left="889px" top="391px" zIndex={2} transform="scale(0.85)">
+        <Image src="/images/beaker_lines.svg" />
+      </Box>
+      {isNaN(percent) ? null : (
+        <motion.div
+          style={{
+            position: 'absolute',
+            left: 770,
+            top: 710,
+            maxHeight: percent,
+            transform: 'scale(0.85) rotate(180deg)',
+            height: percent,
+            overflow: 'hidden',
+            transformOrigin: 'top',
+          }}
+          initial={{ height: 0 }}
+          animate={{ height: percent }}
+          transition={{ type: 'spring', stiffness: 1000 }}
+        >
+          <Image src="/images/beaker_liquid.svg" transform="rotate(180deg)" />
+        </motion.div>
+      )}
+    </Stack>
   )
 }
 

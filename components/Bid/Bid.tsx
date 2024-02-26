@@ -1,23 +1,15 @@
 import { Stack } from '@chakra-ui/react'
-import React from 'react'
-import PlaceBid from './PlaceBid'
 import MyBid from './MyBid'
+import PlaceBid from './PlaceBid'
 import Risk from './Risk'
-import Page from '../Page'
 
-type Props = {}
-
-const Bid = (props: Props) => {
+const Bid = () => {
   return (
-    <Page>
-      <Stack pb="10">
-        <Risk />
-        <PlaceBid />
-        <MyBid />
-        <MyBid />
-        <MyBid />
-      </Stack>
-    </Page>
+    <Stack pb="10">
+      <Risk />
+      <PlaceBid />
+      <MyBid />
+    </Stack>
   )
 }
 

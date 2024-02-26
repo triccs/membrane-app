@@ -2,7 +2,7 @@ import { shiftDigits } from '@/helpers/math'
 import { useAssetBySymbol } from '@/hooks/useAssets'
 import { Card, HStack, Image, Stack, Text } from '@chakra-ui/react'
 import { useMemo } from 'react'
-import { TxButton } from '../TxButton'
+import { TxButton } from '@/components/TxButton'
 import useClaim from './hooks/useClaim'
 import useStaked from './hooks/useStaked'
 import { isGreaterThanZero } from '@/helpers/num'
@@ -32,6 +32,7 @@ const Claim = () => {
       </Stack>
 
       <TxButton
+        maxW="200px"
         isDisabled={!isGreaterThanZero(claimable)}
         isLoading={claim.isPending}
         onClick={() => claim.mutate()}

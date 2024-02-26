@@ -4,8 +4,6 @@ export const Button: ComponentStyleConfig = {
   baseStyle: {
     borderRadius: '8px',
     fontWeight: 'bold',
-    // border: '1px solid',
-    // boxShadow: '0px 0px 16px 0px rgba(0, 163, 249, 0.32)',
     py: 2,
     px: 3,
     w: 'full',

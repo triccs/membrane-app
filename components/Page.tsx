@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { Fragment, PropsWithChildren, useMemo } from 'react'
 import Logo from './Logo'
 import SideNav from './SideNav'
+import RPCStatus from './RPCStatus'
 
 type Props = PropsWithChildren & {
   isScrollable?: boolean
@@ -67,6 +68,7 @@ const Page = ({ isScrollable = true, children }: Props) => {
         mt="10"
         flexGrow={1}
       >
+        <RPCStatus />
         {children}
       </Stack>
     </HStack>

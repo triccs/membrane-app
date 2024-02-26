@@ -41,16 +41,14 @@ const Unstake = () => {
       </Stack>
 
       <TxButton
+        maxW="200px"
         isLoading={unstake.simulate.isLoading || unstake.tx.isPending}
         isDisabled={unstake.simulate.isError || Number(unstakeAmount) <= 0}
         onClick={() => unstake.tx.mutate()}
       >
         Unstake
       </TxButton>
-      <TxError
-        isError={unstake?.simulate?.isError}
-        errorMessage={unstake?.simulate?.errorMessage}
-      />
+      <TxError action={unstake} />
     </Card>
   )
 }

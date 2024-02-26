@@ -8,7 +8,7 @@ type Props = {
 }
 
 const TxError = ({ action }: Props) => {
-  const { isError, error } = action?.simulate
+  const { isError, error } = action?.simulate || {}
   if (!isError) return null
 
   const errorMessage = useMemo(() => {

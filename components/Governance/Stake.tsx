@@ -34,13 +34,14 @@ const Stake = () => {
       </Stack>
 
       <TxButton
+        maxW="200px"
         isLoading={stake.simulate.isLoading || stake.tx.isPending}
         isDisabled={stake.simulate.isError || Number(stakeAmount) <= 0}
         onClick={() => stake.tx.mutate()}
       >
         Stake
       </TxButton>
-      <TxError isError={stake?.simulate?.isError} errorMessage={stake?.simulate?.errorMessage} />
+      <TxError action={stake} />
     </Card>
   )
 }

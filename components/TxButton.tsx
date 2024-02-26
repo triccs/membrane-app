@@ -1,6 +1,7 @@
 import { FC, PropsWithChildren } from 'react'
 import { Button, ButtonProps, Tooltip } from '@chakra-ui/react'
 import useWallet from '@/hooks/useWallet'
+import { ConnectButton } from './WallectConnect'
 
 interface ConnectionButtonProps {
   disabledTooltip?: string
@@ -11,14 +12,10 @@ export const TxButton: FC<PropsWithChildren<ConnectionButtonProps & ButtonProps>
   children,
   ...buttonProps
 }) => {
-  const { isWalletConnected, connect } = useWallet()
+  const { isWalletConnected } = useWallet()
 
   if (!isWalletConnected) {
-    return (
-      <Button maxW="200px" onClick={connect}>
-        Connect Wallet
-      </Button>
-    )
+    return <ConnectButton {...buttonProps} />
   }
 
   return (

@@ -7,20 +7,20 @@ import getCosmWasmClient from '@/helpers/comswasmClient'
 import { shiftDigits } from '@/helpers/math'
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
-const mockData = [
-  {
-    deposit: 5000000,
-    lock_up_duration: 12,
-  },
-  {
-    deposit: 3000000,
-    lock_up_duration: 6,
-  },
-  {
-    deposit: 2000000,
-    lock_up_duration: 9,
-  },
-]
+// const mockData = [
+//   {
+//     deposit: 5000000,
+//     lock_up_duration: 12,
+//   },
+//   {
+//     deposit: 3000000,
+//     lock_up_duration: 6,
+//   },
+//   {
+//     deposit: 2000000,
+//     lock_up_duration: 9,
+//   },
+// ]
 
 export const lockdropClient = async () => {
   const cosmWasmClient = await getCosmWasmClient()
@@ -72,10 +72,16 @@ export const getIncentives = async (user: Addr) => {
     })
 }
 
-export const getUserInfo = async () => {
+export const getUserInfo = async (address: Addr) => {
   const osmos = getAssetBySymbol('OSMO')
+  const client = await lockdropClient()
+  const userInfo = await client.userInfo({
+    user: address,
+  })
 
-  const updateData = mockData.map((data) => {
+  console.log({ userInfo })
+
+  const updateData = userInfo?.deposits?.map((data) => {
     return {
       deposit: shiftDigits(data.deposit, -osmos?.decimal!).toNumber(),
       lockUpDuration: data.lock_up_duration,
