@@ -1,103 +1,89 @@
+import { num } from '@/helpers/num'
 import {
+  Box,
   Card,
-  HStack,
-  Slider,
-  SliderFilledTrack,
-  SliderThumb,
-  SliderTrack,
+  Image,
   Stack,
   Tab,
   TabIndicator,
   TabList,
-  TabPanel,
   TabPanels,
   Tabs,
   Text,
   VStack,
 } from '@chakra-ui/react'
-import React from 'react'
+import { motion } from 'framer-motion'
+import { useEffect, useMemo } from 'react'
+import Page from '../Page'
+import CurrentPositions from './CurrentPositions'
+import { Summary } from './Summary'
+import useCombinBalance from './hooks/useCombinBalance'
+import useMintState from './hooks/useMintState'
 import useVaultSummary from './hooks/useVaultSummary'
+import { calcuateMintAndRepay, setInitialMintState } from '@/helpers/mint'
+import TakeAction from './TakeAction'
+import useWallet from '@/hooks/useWallet'
+import LockedAccess from '@/components/LockedAccess'
 
-type Props = {}
+const CustomeTab = ({ label }: { label: string }) => (
+  <Tab zIndex={1} _selected={{ color: 'white' }}>
+    {label}
+  </Tab>
+)
 
-const useMintStats = () => {
-  return [
-    {
-      label: 'DEBT',
-      value: '239 CDT',
-    },
-    {
-      label: 'LTV',
-      value: '82.1%',
-    },
-    {
-      label: 'COST',
-      value: '0.0028%',
-    },
-    {
-      label: 'BORROWABLE LTV',
-      value: '88%',
-    },
-    {
-      label: 'LIQ. VALUE',
-      value: '$254',
-    },
-    {
-      label: 'LIQUIDATION LTV',
-      value: '0.94%%',
-    },
-    {
-      label: 'LIQUIDATION LTV',
-      value: '$290',
-    },
-  ]
-}
+const Mint = () => {
+  const { setMintState, mintState } = useMintState()
+  const combinBalance = useCombinBalance()
+  const { ltv, borrowLTV, originalLTV = 0, originalTVL = 0, tvl, debtAmount } = useVaultSummary()
 
-const useMyVaults = () => {
-  return [
-    {
-      label: 'ATOM',
-      value: '12212.788($239)',
-    },
-    {
-      label: 'OSMO',
-      value: '$82.1',
-    },
-    {
-      label: 'TIA',
-      value: '$0.002',
-    },
-    {
-      label: 'LTV',
-      value: '$88',
-    },
-  ]
-}
+  useEffect(() => {
+    // need to set initial state when combin balance is ready
+    setInitialMintState({ combinBalance, ltv, borrowLTV, setMintState })
+  }, [combinBalance])
 
-const Mint = (props: Props) => {
-  const stats = useMintStats()
-  const myVaults = useMyVaults()
+  useEffect(() => {
+    // need to recalculate mint and repay when ltv or borrowLTV changes
+    const ltvSlider = num(ltv).times(100).dividedBy(borrowLTV).toNumber()
 
-  // const summary = useVaultSummary()
+    const { mint, repay } = calcuateMintAndRepay(
+      ltvSlider,
+      originalLTV,
+      originalTVL,
+      borrowLTV,
+      tvl,
+      debtAmount,
+    )
+    setMintState({ ltvSlider, mint, repay })
+  }, [ltv, borrowLTV])
 
-  const [atom, setAtom] = React.useState(30)
+  const onTabChange = (index: number) => {
+    setMintState({ isTakeAction: index === 1 })
+  }
+
+  const percent = useMemo(() => {
+    const ltvSlider = mintState?.ltvSlider || 0
+    const value = num(ltvSlider).isLessThan(5) ? num(ltvSlider).times(2.6) : num(ltvSlider)
+    return num(value).times(336).div(100).toNumber()
+  }, [mintState.ltvSlider])
 
   return (
-    <Stack justifyContent="center" h="full">
-      <Card w="380px" alignItems="center" gap="12" h="490px">
+    <Stack w="full" h="full" justifyContent="center">
+      <Card w="380px" gap="12" h="max-content" px="2">
         <VStack w="full" gap="5">
           <Text variant="title" fontSize="24px">
             Mint
           </Text>
 
-          <Tabs position="relative" variant="unstyled" align="center" w="full">
+          <Tabs
+            position="relative"
+            variant="unstyled"
+            align="center"
+            w="full"
+            onChange={onTabChange}
+          >
             <TabList bg="white" borderRadius="28px" color="black" w="fit-content">
-              <Tab zIndex={1} _selected={{ color: 'white' }}>
-                Current Position
-              </Tab>
-              <Tab zIndex={1} _selected={{ color: 'white' }}>
-                Take Action
-              </Tab>
+              <CustomeTab label="Position info" />
+              <CustomeTab label="Take Action" />
             </TabList>
 
             <TabIndicator
@@ -108,56 +94,34 @@ const Mint = (props: Props) => {
               borderRadius="28px"
             />
             <TabPanels mt="5">
-              <TabPanel>
-                <Stack gap="5">
-                  {stats.map(({ label, value }) => (
-                    <HStack key={label + value} justifyContent="space-between">
-                      <Text variant="lable">{label}</Text>
-                      <Text variant="value">{value}</Text>
-                    </HStack>
-                  ))}
-                </Stack>
-              </TabPanel>
-
-              <TabPanel>
-                <Stack gap="5">
-                  {myVaults.map(({ label, value }) => (
-                    <Stack key={label + value} gap="0">
-                      <HStack justifyContent="space-between">
-                        <Text variant="lable">{label}</Text>
-                        <HStack>
-                          <Text variant="value">{label === 'ATOM' ? atom : value}</Text>
-                          <Text variant="value" color="primary.200">
-                            {label === 'ATOM' ? `($${(atom * 10.2).toFixed(2)})` : value}
-                          </Text>
-                        </HStack>
-                      </HStack>
-
-                      <Slider
-                        aria-label="slider-ex-4"
-                        defaultValue={atom}
-                        min={0}
-                        max={400}
-                        onChange={(v) => setAtom(v)}
-                      >
-                        <SliderTrack bg="#E2D8DA" h="2" borderRadius="80px">
-                          <SliderFilledTrack bg="#C445F0" />
-                        </SliderTrack>
-                        <SliderThumb
-                          boxSize={6}
-                          bg="#C445F0"
-                          cursor="grab"
-                          border="2px solid #E2D8DA"
-                        />
-                      </Slider>
-                    </Stack>
-                  ))}
-                </Stack>
-              </TabPanel>
+              <CurrentPositions />
+              <TakeAction />
             </TabPanels>
           </Tabs>
         </VStack>
       </Card>
+      <Box position="absolute" left="889px" top="391px" zIndex={2} transform="scale(0.85)">
+        <Image src="/images/beaker_lines.svg" />
+      </Box>
+      {isNaN(percent) ? null : (
+        <motion.div
+          style={{
+            position: 'absolute',
+            left: 770,
+            top: 710,
+            maxHeight: percent,
+            transform: 'scale(0.85) rotate(180deg)',
+            height: percent,
+            overflow: 'hidden',
+            transformOrigin: 'top',
+          }}
+          initial={{ height: 0 }}
+          animate={{ height: percent }}
+          transition={{ type: 'spring', stiffness: 1000 }}
+        >
+          <Image src="/images/beaker_liquid.svg" transform="rotate(180deg)" />
+        </motion.div>
+      )}
     </Stack>
   )
 }

@@ -1,9 +1,12 @@
 import Lockdrop from '@/components/Lockdrop'
+import Page from '@/components/Page'
 
-type Props = {}
-
-const lockdrop = (props: Props) => {
-  return <Lockdrop />
+const LockdropPage = () => {
+  return (
+    <Page>
+      <Lockdrop />
+    </Page>
+  )
 }
 
-export default lockdrop
+export default LockdropPage

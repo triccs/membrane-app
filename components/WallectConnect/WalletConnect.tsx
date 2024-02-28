@@ -37,6 +37,7 @@ const WalletConnect = () => {
         color={isHovered ? '#C445F0' : 'white'}
         py="6"
         pl="2"
+        bg="whiteAlpha.100"
       >
         <Stack gap="-2px" alignItems="flex-start" ml="-6px">
           <Text fontSize="sm">{username}</Text>

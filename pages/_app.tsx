@@ -1,27 +1,20 @@
-import type { AppProps } from 'next/app'
-import { ChakraProvider } from '@chakra-ui/react'
 import theme from '@/theme'
-import Layout from '@/components/Layout'
-
+import { ChakraProvider } from '@chakra-ui/react'
+import type { AppProps } from 'next/app'
 import { SignerOptions } from '@cosmos-kit/core'
 import { ChainProvider } from '@cosmos-kit/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { assets, chains } from 'chain-registry'
 import { GasPrice } from 'cosmwasm'
-
 import { wallets as cosmostationWallets } from '@cosmos-kit/cosmostation'
 import { wallets as keplrWallets } from '@cosmos-kit/keplr'
-// import { wallets as snapWallet } from "@cosmos-kit/leap-metamask-cosmos-snap";
 import { wallets as leapWallets } from '@cosmos-kit/leap'
 import { wallets as ledgerWallets } from '@cosmos-kit/ledger'
-import { wallets as shellWallets } from '@cosmos-kit/shell'
 import { wallets as stationWallets } from '@cosmos-kit/station'
-
 import { Chain } from '@chain-registry/types'
-// import { SigningCosmWasmClientOptions } from '@cosmjs/cosmwasm-stargate'
-import '@interchain-ui/react/styles'
-import { aminoTypes, registry } from '@/config/defaults'
 import WalletModal from '@/components/WalletModal'
+import { aminoTypes, registry, rpcUrl } from '@/config/defaults'
+import '@interchain-ui/react/styles'
 import { useEffect, useState } from 'react'
 
 const signerOptions: SignerOptions = {
@@ -67,35 +60,29 @@ const App = ({ Component, pageProps }: AppProps) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ChakraProvider theme={theme}>
+      <ChakraProvider resetCSS theme={theme}>
         <ChainProvider
           chains={chains}
           assetLists={assets}
           wallets={[
-            ...keplrWallets,
-            ...cosmostationWallets,
-            // ...xdefiWallets,
-            ...leapWallets?.slice(0, 2),
+            ...keplrWallets?.slice(0, 1),
+            ...cosmostationWallets?.slice(0, 1),
+            ...ledgerWallets?.slice(0, 1),
+            ...leapWallets?.slice(0, 1),
+            ...stationWallets?.slice(0, 1),
           ]}
           walletModal={WalletModal}
           signerOptions={signerOptions}
           endpointOptions={{
             isLazy: true,
             endpoints: {
-              // 'osmosistestnet5': {
-              //   rpc: ["https://rpc.margined.io"],
-              // }
               osmosis: {
-                rpc: [
-                  'https://g.w.lavanet.xyz:443/gateway/cos3/rpc-http/bb6d2019c50124ec4fdb78498bc50573',
-                ],
+                rpc: [rpcUrl],
               },
             },
           }}
         >
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <Component {...pageProps} />
         </ChainProvider>
       </ChakraProvider>
     </QueryClientProvider>

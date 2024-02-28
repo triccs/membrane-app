@@ -1,25 +1,18 @@
+import LockedAccess from '@/components/LockedAccess'
 import Mint from '@/components/Mint'
-import { useBasket, useBasketPositions, useCollateralInterest } from '@/hooks/useCDP'
-import { useIncentives } from '@/components/Lockdrop/hooks/useLockdrop'
-import { useOraclePrice } from '@/hooks/useOracle'
-import React from 'react'
+import Page from '@/components/Page'
+import useWallet from '@/hooks/useWallet'
 
-type Props = {}
+const MintPage = () => {
+  const { isWalletConnected } = useWallet()
 
-const MintPage = (props: Props) => {
-  const prices = useOraclePrice()
-  const basket = useBasket()
-  const collateralInterest = useCollateralInterest()
-  const positions = useBasketPositions()
+  if (!isWalletConnected) return <LockedAccess />
 
-  console.log({
-    prices,
-    basket,
-    collateralInterest,
-    positions,
-  })
-
-  return <Mint />
+  return (
+    <Page isScrollable={false}>
+      <Mint />
+    </Page>
+  )
 }
 
 export default MintPage

@@ -31,6 +31,8 @@ export const useCreditRate = () => {
 
 export const useBasketPositions = () => {
   const { address } = useWallet()
+  // mock address
+  // const address = 'osmo1988s5h45qwkaqch8km4ceagw2e08vdw28mwk4n'
   return useQuery({
     queryKey: ['baseket positions', address],
     queryFn: async () => {

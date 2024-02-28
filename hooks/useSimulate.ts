@@ -30,11 +30,6 @@ const useSimulate = ({ msgs, amount, enabled = true, queryKey = [] }: Simulate) 
       setErrorMessage(null)
       return Promise.all([estimateFee(msgs), signingClient?.simulate(address, msgs, undefined)])
     },
-    onError: (error: Error) => {
-      console.error(error)
-      const message = parseError(error)
-      setErrorMessage(message)
-    },
     enabled: enabled && (msgs?.length || 0) > 0 && isWalletConnected && Number(amount) > 0,
     retry: false,
     staleTime: 30000, // data considered "fresh" for 30 seconds

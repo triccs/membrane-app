@@ -32,7 +32,7 @@ const featurs = [
 const Home = () => {
   return (
     <Center h="full">
-      <SimpleGrid columns={2} spacing={10} width="700px">
+      <SimpleGrid columns={2} spacing={5} width="648px" ml="82px" mt="143px">
         {featurs.map((feature, index) => (
           <FeatureCard key={index} {...feature} />
         ))}

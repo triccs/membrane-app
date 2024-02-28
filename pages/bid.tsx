@@ -1,10 +1,13 @@
 import Bid from '@/components/Bid'
+import Page from '@/components/Page'
 import React from 'react'
 
-type Props = {}
-
-const BidPage = (props: Props) => {
-  return <Bid />
+const BidPage = () => {
+  return (
+    <Page>
+      <Bid />
+    </Page>
+  )
 }
 
 export default BidPage

@@ -26,7 +26,7 @@ const Unstake = () => {
   }
 
   return (
-    <Card w="470px" p="8" alignItems="center" gap={5} h="full" justifyContent="space-between">
+    <Card w="full" p="8" alignItems="center" gap={5} h="full" justifyContent="space-between">
       <Text variant="title" fontSize="24px">
         Unstake
       </Text>
@@ -41,16 +41,14 @@ const Unstake = () => {
       </Stack>
 
       <TxButton
+        maxW="200px"
         isLoading={unstake.simulate.isLoading || unstake.tx.isPending}
         isDisabled={unstake.simulate.isError || Number(unstakeAmount) <= 0}
         onClick={() => unstake.tx.mutate()}
       >
         Unstake
       </TxButton>
-      <TxError
-        isError={unstake?.simulate?.isError}
-        errorMessage={unstake?.simulate?.errorMessage}
-      />
+      <TxError action={unstake} />
     </Card>
   )
 }
