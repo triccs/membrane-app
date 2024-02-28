@@ -6,6 +6,7 @@ import useMintState from './hooks/useMintState'
 
 const CollateralAssets = () => {
   const { mintState, setMintState } = useMintState()
+
   const sliderChange = (value: number, symbol: string) => {
     const updatedAssets = mintState.assets.map((asset) => {
       const sliderValue = asset.symbol === symbol ? value : asset.sliderValue
