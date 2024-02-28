@@ -1,27 +1,14 @@
-import {
-  useDisclosure,
-  Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  Text,
-  Stack,
-} from '@chakra-ui/react'
-import React, { PropsWithChildren } from 'react'
-import { TxButton } from '../TxButton'
-import LoaderWithIcon from '../LoaderWithIcon'
 import { Action } from '@/types/tx'
-import { LoadingContent } from './LoadingContent'
+import { Button, Modal, ModalOverlay, useDisclosure } from '@chakra-ui/react'
+import { PropsWithChildren } from 'react'
 import ConfrimDetails from './ConfrimDetails'
+import { LoadingContent } from './LoadingContent'
 import { TxDetails } from './TxDetails'
 
 type Props = PropsWithChildren & {
   label: string
   action?: Action
+  isDisabled?: boolean
 }
 
 const mockSuccess = {
@@ -46,13 +33,13 @@ const mockLoading = {
   },
 }
 
-const ConfirmModal = ({ children, label = 'Open', action }: Props) => {
+const ConfirmModal = ({ children, label = 'Open', action, isDisabled = false }: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <>
       <Button
         isLoading={action?.simulate.isLoading || action?.tx.isPending}
-        isDisabled={action?.simulate.isError || !action?.simulate.data}
+        isDisabled={isDisabled || action?.simulate.isError || !action?.simulate.data}
         onClick={onOpen}
       >
         {label}

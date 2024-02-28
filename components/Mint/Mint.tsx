@@ -45,7 +45,9 @@ const Mint = () => {
     // need to recalculate mint and repay when ltv or borrowLTV changes
     const ltvSlider = num(ltv).times(100).dividedBy(borrowLTV).toNumber()
 
-    const { mint, repay } = calcuateMintAndRepay(
+    console.log({ ltvSlider })
+
+    const { mint, repay, overdraft } = calcuateMintAndRepay(
       ltvSlider,
       originalLTV,
       originalTVL,
@@ -53,8 +55,14 @@ const Mint = () => {
       tvl,
       debtAmount,
     )
-    setMintState({ ltvSlider, mint, repay })
-  }, [ltv, borrowLTV])
+    if (overdraft) {
+      console.log('overdraft')
+      setMintState({ overdraft, mint })
+      return
+    }
+
+    setMintState({ ltvSlider, mint, overdraft })
+  }, [ltv, borrowLTV, mintState?.totalUsdValue])
 
   const onTabChange = (index: number) => {
     setMintState({ isTakeAction: index === 1 })

@@ -25,6 +25,12 @@ const CollateralAssets = () => {
     })
 
     const { summary, totalUsdValue } = getSummary(updatedAssets)
+    console.log({
+      assets: updatedAssets,
+      summary,
+      totalUsdValue,
+    })
+
     setMintState({ assets: updatedAssets, summary, totalUsdValue })
   }
 

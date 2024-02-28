@@ -5,6 +5,7 @@ import ConfirmModal from '@/components/ConfirmModal'
 import { Summary } from './Summary'
 import useMint from './hooks/useMint'
 import TxError from '@/components/TxError'
+import useMintState from './hooks/useMintState'
 
 type Props = {
   onRest: () => void
@@ -12,14 +13,15 @@ type Props = {
 
 const ActionButtons = ({ onRest }: Props) => {
   const mint = useMint()
+  const { mintState } = useMintState()
 
   return (
     <HStack mt="5" gap="4">
-      <ConfirmModal label="Open" action={mint}>
-        <Stack>
-          <Summary />
-          <TxError action={mint} />
-        </Stack>
+      <ConfirmModal label="Open" action={mint} isDisabled={mintState?.overdraft}>
+        {/* <Stack> */}
+        <Summary />
+        <TxError action={mint} />
+        {/* </Stack> */}
       </ConfirmModal>
       <Button variant="ghost" leftIcon={<GrPowerReset />} onClick={onRest}>
         Reset

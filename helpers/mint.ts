@@ -59,6 +59,7 @@ export const calcuateMintAndRepay = (
   const diff = num(originalLtvAmount).minus(newLtvAmount).abs().dp(2).toNumber()
   let repay = num(newLtvAmount).isLessThan(originalLtvAmount) ? diff : 0
   let mint = num(originalLtvAmount).isLessThan(newLtvAmount) ? diff : 0
+  let overdraft = false
 
   if (maxLtvAmount < debtAmount) {
     repay = num(debtAmount).minus(maxLtvAmount).dp(2).toNumber()
@@ -68,9 +69,21 @@ export const calcuateMintAndRepay = (
     repay = 0
   }
 
+  // if maxLtvAmount is less than debtAmount, then set overdraft to true
+  if (num(maxLtvAmount).isLessThan(debtAmount)) overdraft = true
+
+  console.log({
+    mint,
+    repay,
+    overdraft,
+    maxLtvAmount,
+    debtAmount,
+  })
+
   return {
     mint,
     repay,
+    overdraft,
   }
 }
 

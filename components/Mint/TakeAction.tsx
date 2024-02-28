@@ -1,7 +1,7 @@
 import TxError from '@/components/TxError'
 import { setInitialMintState } from '@/helpers/mint'
 import { num } from '@/helpers/num'
-import { Box, Divider, TabPanel } from '@chakra-ui/react'
+import { Box, Divider, TabPanel, Text } from '@chakra-ui/react'
 import ActionButtons from './ActionButtons'
 import { AssetWithSlider } from './AssetWithSlider'
 import CollateralAssets from './CollateralAssets'
@@ -9,6 +9,15 @@ import useCombinBalance from './hooks/useCombinBalance'
 import useMint from './hooks/useMint'
 import useMintState from './hooks/useMintState'
 import useVaultSummary from './hooks/useVaultSummary'
+
+const OverDraftMessage = ({ show = false }: { show?: boolean }) => {
+  if (!show) return null
+  return (
+    <Text fontSize="sm" color="red.500" mt="2">
+      Withdrawal amount exceeds the maximum LTV.
+    </Text>
+  )
+}
 
 const TakeAction = () => {
   const { mintState, setMintState } = useMintState()
@@ -31,8 +40,21 @@ const TakeAction = () => {
     const diff = num(originalLtvAmount).minus(newLtv).abs().toNumber()
     const repay = num(newLtv).isLessThan(originalLtvAmount) ? diff : 0
     const mint = num(originalLtvAmount).isLessThan(newLtv) ? diff : 0
+    let overdraft = false
 
-    setMintState({ ltvSlider, mint, repay })
+    // if maxLtvAmount is less than debtAmount, then set overdraft to true
+    const newDebtAmount = num(debtAmount).minus(repay).toNumber()
+    if (num(maxLtv).isLessThan(newDebtAmount)) overdraft = true
+
+    console.log({
+      mint,
+      repay,
+      overdraft,
+      maxLtv,
+      debtAmount,
+    })
+
+    setMintState({ ltvSlider, mint, repay, overdraft })
   }
 
   const onRest = () => {
@@ -70,6 +92,7 @@ const TakeAction = () => {
       </Box>
 
       <ActionButtons onRest={onRest} />
+      <OverDraftMessage show={mintState.overdraft} />
       <TxError action={mint} />
     </TabPanel>
   )
