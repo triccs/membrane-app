@@ -4,15 +4,17 @@ import React from 'react'
 export type SliderProps = {
   value: number
   onChange: (value: number) => void
+  min?: number
+  max?: number
 }
 
-export const SliderWithState = ({ value, onChange }: SliderProps) => {
+export const SliderWithState = ({ value, onChange, min = 0, max = 100 }: SliderProps) => {
   return (
     <Slider
       aria-label="slider-ex-4"
       defaultValue={0}
-      min={0}
-      max={100}
+      min={min}
+      max={max}
       value={value}
       onChange={onChange}
     >

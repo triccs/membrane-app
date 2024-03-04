@@ -17,11 +17,9 @@ const ActionButtons = ({ onRest }: Props) => {
 
   return (
     <HStack mt="5" gap="4">
-      <ConfirmModal label="Open" action={mint} isDisabled={mintState?.overdraft}>
-        {/* <Stack> */}
+      <ConfirmModal label="Open" action={mint}>
         <Summary />
         <TxError action={mint} />
-        {/* </Stack> */}
       </ConfirmModal>
       <Button variant="ghost" leftIcon={<GrPowerReset />} onClick={onRest}>
         Reset

@@ -285,10 +285,10 @@ const updatedSummary = (summary: any, basketPositions: any, prices: any) => {
   const positions = getPositions(basketPositions, prices)
 
   return positions.map((position) => {
-    const updatedPosition = summary.find((p: any) => p.label === position.symbol)
+    const updatedPosition = summary.find((p: any) => p.symbol === position.symbol)
     const price = prices?.find((p) => p.denom === position.denom)?.price || 0
     const amount = num(position.amount)
-      .plus(updatedPosition?.value || 0)
+      .plus(updatedPosition?.amount || 0)
       .toNumber()
     const usdValue = amount * price
     return {
@@ -361,5 +361,7 @@ export const calculateVaultSummary = ({
     originalLTV,
     originalTVL,
     originalBorrowLTV,
+
+    mintAmount,
   }
 }

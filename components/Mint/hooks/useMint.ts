@@ -18,13 +18,14 @@ const useMint = () => {
       'mint',
       address,
       positionId,
-      summary?.map((s: any) => String(s.value)) || '0',
+      summary?.map((s: any) => String(s.amount)) || '0',
       mintState?.mint,
       mintState?.repay,
     ],
     queryFn: () => {
       if (!address || !positionId) return
       const depositAndWithdraw = getDepostAndWithdrawMsgs({ summary, address, positionId })
+      console.log({ depositAndWithdraw })
       const mintAndRepay = getMintAndRepayMsgs({
         address,
         positionId,
@@ -33,7 +34,7 @@ const useMint = () => {
       })
       return [...depositAndWithdraw, ...mintAndRepay] as MsgExecuteContractEncodeObject[]
     },
-    enabled: !!address && !!positionId && !mintState?.overdraft,
+    enabled: !!address && !!positionId,
   })
 
   return useSimulateAndBroadcast({
@@ -41,7 +42,7 @@ const useMint = () => {
     queryKey: [
       String(mintState?.mint) || '0',
       String(mintState?.repay) || '0',
-      ...summary?.map((s: any) => String(s.value)),
+      ...summary?.map((s: any) => String(s.amount)),
     ],
     amount: '1',
   })

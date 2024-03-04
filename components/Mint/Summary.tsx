@@ -8,7 +8,7 @@ import useMint from './hooks/useMint'
 
 type SummaryItemProps = AssetWithBalance & {
   label: string
-  value: string
+  amount: string
   usdValue: string
   showBadge?: boolean
   badge?: string
@@ -17,7 +17,7 @@ type SummaryItemProps = AssetWithBalance & {
 
 const SummaryItem = ({
   label,
-  value,
+  amount,
   usdValue,
   badge,
   showBadge = true,
@@ -46,7 +46,7 @@ const SummaryItem = ({
       )}
     </HStack>
     <HStack>
-      <Text>{num(value).abs().toString()}</Text>
+      <Text>{num(amount).abs().toString()}</Text>
     </HStack>
   </HStack>
 )
@@ -61,7 +61,7 @@ export const Summary = () => {
   return (
     <Stack h="max-content" overflow="auto" w="full">
       {summary?.map((asset) => {
-        const badge = num(asset.value).isGreaterThan(0) ? 'Deposit' : 'Withdraw'
+        const badge = num(asset.amount).isGreaterThan(0) ? 'Deposit' : 'Withdraw'
         return <SummaryItem key={asset?.label} {...asset} badge={badge} />
       })}
       {num(mintState.mint).isGreaterThan(0) && (
@@ -82,10 +82,6 @@ export const Summary = () => {
           logo={cdt?.logo}
         />
       )}
-
-      {/* <Box mt="5" w="auto" alignSelf="center" minW="50%">
-        <TxButton isDisabled>Mint</TxButton>
-      </Box> */}
     </Stack>
   )
 }

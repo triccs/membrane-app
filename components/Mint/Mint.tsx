@@ -1,3 +1,4 @@
+import { calcuateMintAndRepay, setInitialMintState } from '@/helpers/mint'
 import { num } from '@/helpers/num'
 import {
   Box,
@@ -14,16 +15,11 @@ import {
 } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo } from 'react'
-import Page from '../Page'
 import CurrentPositions from './CurrentPositions'
-import { Summary } from './Summary'
+import TakeAction from './TakeAction'
 import useCombinBalance from './hooks/useCombinBalance'
 import useMintState from './hooks/useMintState'
 import useVaultSummary from './hooks/useVaultSummary'
-import { calcuateMintAndRepay, setInitialMintState } from '@/helpers/mint'
-import TakeAction from './TakeAction'
-import useWallet from '@/hooks/useWallet'
-import LockedAccess from '@/components/LockedAccess'
 
 const CustomeTab = ({ label }: { label: string }) => (
   <Tab zIndex={1} _selected={{ color: 'white' }}>
@@ -36,33 +32,31 @@ const Mint = () => {
   const combinBalance = useCombinBalance()
   const { ltv, borrowLTV, originalLTV = 0, originalTVL = 0, tvl, debtAmount } = useVaultSummary()
 
-  useEffect(() => {
-    // need to set initial state when combin balance is ready
-    setInitialMintState({ combinBalance, ltv, borrowLTV, setMintState })
-  }, [combinBalance])
+  // useEffect(() => {
+  //   // need to set initial state when combin balance is ready
+  //   setInitialMintState({ combinBalance, ltv, borrowLTV, setMintState })
+  // }, [combinBalance])
 
-  useEffect(() => {
-    // need to recalculate mint and repay when ltv or borrowLTV changes
-    const ltvSlider = num(ltv).times(100).dividedBy(borrowLTV).toNumber()
+  // useEffect(() => {
+  //   // need to recalculate mint and repay when ltv or borrowLTV changes
+  //   const ltvSlider = num(ltv).times(100).dividedBy(borrowLTV).toNumber()
 
-    console.log({ ltvSlider })
+  //   const { mint, repay, overdraft } = calcuateMintAndRepay(
+  //     ltvSlider,
+  //     originalLTV,
+  //     originalTVL,
+  //     borrowLTV,
+  //     tvl,
+  //     debtAmount,
+  //   )
+  //   if (overdraft) {
+  //     console.log('overdraft')
+  //     setMintState({ overdraft, mint })
+  //     return
+  //   }
 
-    const { mint, repay, overdraft } = calcuateMintAndRepay(
-      ltvSlider,
-      originalLTV,
-      originalTVL,
-      borrowLTV,
-      tvl,
-      debtAmount,
-    )
-    if (overdraft) {
-      console.log('overdraft')
-      setMintState({ overdraft, mint })
-      return
-    }
-
-    setMintState({ ltvSlider, mint, overdraft })
-  }, [ltv, borrowLTV, mintState?.totalUsdValue])
+  //   setMintState({ ltvSlider, mint, overdraft })
+  // }, [ltv, borrowLTV, mintState?.totalUsdValue])
 
   const onTabChange = (index: number) => {
     setMintState({ isTakeAction: index === 1 })
@@ -81,6 +75,18 @@ const Mint = () => {
           <Text variant="title" fontSize="24px">
             Mint
           </Text>
+
+          {/* <pre>
+            {JSON.stringify(
+              {
+                ltv,
+                borrowLTV,
+                tvl,
+              },
+              null,
+              2,
+            )}
+          </pre> */}
 
           <Tabs
             position="relative"

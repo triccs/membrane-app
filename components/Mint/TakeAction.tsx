@@ -9,12 +9,12 @@ import useCombinBalance from './hooks/useCombinBalance'
 import useMint from './hooks/useMint'
 import useMintState from './hooks/useMintState'
 import useVaultSummary from './hooks/useVaultSummary'
+import { LTVWithSlider } from './LTVWithSlider'
 
 const OverDraftMessage = ({ show = false }: { show?: boolean }) => {
-  if (!show) return null
   return (
-    <Text fontSize="sm" color="red.500" mt="2">
-      Withdrawal amount exceeds the maximum LTV.
+    <Text fontSize="sm" color="red.500" mt="2" minH="21px">
+      {show ? 'Withdrawal amount exceeds the maximum LTV.' : ' '}
     </Text>
   )
 }
@@ -33,28 +33,27 @@ const TakeAction = () => {
     debtAmount,
   } = useVaultSummary()
 
+  console.log({
+    tvl,
+    borrowLTV,
+    originalBorrowLTV,
+    originalLTV,
+    originalTVL,
+    debtAmount,
+  })
+
   const totalsliderChange = (ltvSlider: number) => {
-    const originalLtvAmount = num(originalLTV).times(originalTVL).dividedBy(100).toNumber()
-    const maxLtv = num(borrowLTV).times(tvl).dividedBy(100).toNumber()
-    const newLtv = num(ltvSlider).times(maxLtv).dividedBy(100).toNumber()
-    const diff = num(originalLtvAmount).minus(newLtv).abs().toNumber()
-    const repay = num(newLtv).isLessThan(originalLtvAmount) ? diff : 0
-    const mint = num(originalLtvAmount).isLessThan(newLtv) ? diff : 0
-    let overdraft = false
-
-    // if maxLtvAmount is less than debtAmount, then set overdraft to true
-    const newDebtAmount = num(debtAmount).minus(repay).toNumber()
-    if (num(maxLtv).isLessThan(newDebtAmount)) overdraft = true
-
-    console.log({
-      mint,
-      repay,
-      overdraft,
-      maxLtv,
-      debtAmount,
-    })
-
-    setMintState({ ltvSlider, mint, repay, overdraft })
+    // const originalLtvAmount = num(originalLTV).times(originalTVL).dividedBy(100).toNumber()
+    // const maxLtv = num(borrowLTV).times(tvl).dividedBy(100).toNumber()
+    // const newLtv = num(ltvSlider).times(maxLtv).dividedBy(100).toNumber()
+    // const diff = num(originalLtvAmount).minus(newLtv).abs().toNumber()
+    // const repay = num(newLtv).isLessThan(originalLtvAmount) ? diff : 0
+    // const mint = num(originalLtvAmount).isLessThan(newLtv) ? diff : 0
+    // let overdraft = false
+    // // if maxLtvAmount is less than debtAmount, then set overdraft to true
+    // const newDebtAmount = num(debtAmount).minus(repay).toNumber()
+    // if (num(maxLtv).isLessThan(newDebtAmount)) overdraft = true
+    // setMintState({ ltvSlider, mint, repay, overdraft })
   }
 
   const onRest = () => {
@@ -65,6 +64,10 @@ const TakeAction = () => {
       setMintState,
     })
   }
+
+  console.log({
+    debtAmount,
+  })
 
   return (
     <TabPanel>
@@ -80,12 +83,13 @@ const TakeAction = () => {
       />
 
       <Box px="3">
-        <AssetWithSlider
+        <LTVWithSlider
           label="Mintable LTV"
           value={num(debtAmount)
             .plus(mintState?.mint || 0)
             .minus(mintState.repay || 0)
-            .toFixed(2)}
+            .dp(2)
+            .toNumber()}
           sliderValue={mintState?.ltvSlider}
           onChange={totalsliderChange}
         />
