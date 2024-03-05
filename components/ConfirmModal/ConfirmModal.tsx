@@ -39,7 +39,7 @@ const ConfirmModal = ({ children, label = 'Open', action, isDisabled = false }: 
     <>
       <Button
         isLoading={action?.simulate.isLoading || action?.tx.isPending}
-        // isDisabled={isDisabled || action?.simulate.isError || !action?.simulate.data}
+        isDisabled={isDisabled || action?.simulate.isError || !action?.simulate.data}
         onClick={onOpen}
       >
         {label}
