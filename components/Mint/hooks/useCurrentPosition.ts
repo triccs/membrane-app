@@ -6,7 +6,7 @@ export const useCurrentPosition = () => {
   const summary = useVaultSummary()
   const { mintState } = useMintState()
 
-  const isValueChanged = num(mintState.totalUsdValue).isGreaterThan(0)
+  const isValueChanged = !num(mintState.totalUsdValue).isZero()
 
   return [
     {

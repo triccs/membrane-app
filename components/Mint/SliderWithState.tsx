@@ -2,13 +2,13 @@ import { Slider, SliderFilledTrack, SliderThumb, SliderTrack } from '@chakra-ui/
 import React from 'react'
 
 export type SliderProps = {
-  value: number
+  value?: number
   onChange: (value: number) => void
   min?: number
   max?: number
 }
 
-export const SliderWithState = ({ value, onChange, min = 0, max = 100 }: SliderProps) => {
+export const SliderWithState = ({ value = 0, onChange, min = 0, max = 100 }: SliderProps) => {
   return (
     <Slider
       aria-label="slider-ex-4"

@@ -1,15 +1,15 @@
 import TxError from '@/components/TxError'
 import { setInitialMintState } from '@/helpers/mint'
 import { num } from '@/helpers/num'
-import { Box, Divider, TabPanel, Text } from '@chakra-ui/react'
+import { Divider, TabPanel, Text } from '@chakra-ui/react'
+import { useEffect } from 'react'
 import ActionButtons from './ActionButtons'
-import { AssetWithSlider } from './AssetWithSlider'
 import CollateralAssets from './CollateralAssets'
+import { LTVWithSlider } from './LTVWithSlider'
 import useCombinBalance from './hooks/useCombinBalance'
 import useMint from './hooks/useMint'
 import useMintState from './hooks/useMintState'
 import useVaultSummary from './hooks/useVaultSummary'
-import { LTVWithSlider } from './LTVWithSlider'
 
 const OverDraftMessage = ({ show = false }: { show?: boolean }) => {
   return (
@@ -19,55 +19,31 @@ const OverDraftMessage = ({ show = false }: { show?: boolean }) => {
   )
 }
 
+const calcSliderValue = (debtAmount: number, mint: number = 0, repay: number = 0) => {
+  return num(debtAmount).plus(mint).minus(repay).dp(2).toNumber()
+}
+
 const TakeAction = () => {
   const { mintState, setMintState } = useMintState()
   const combinBalance = useCombinBalance()
   const mint = useMint()
+  const { ltv, borrowLTV, initialBorrowLTV, initialLTV, debtAmount } = useVaultSummary()
 
-  const {
-    tvl,
-    borrowLTV,
-    originalBorrowLTV,
-    originalLTV,
-    originalTVL = 0,
-    debtAmount,
-  } = useVaultSummary()
+  useEffect(() => {
+    const overdraft = ltv > borrowLTV
+    setMintState({ overdraft })
+  }, [ltv, borrowLTV])
 
-  console.log({
-    tvl,
-    borrowLTV,
-    originalBorrowLTV,
-    originalLTV,
-    originalTVL,
-    debtAmount,
-  })
-
-  const totalsliderChange = (ltvSlider: number) => {
-    // const originalLtvAmount = num(originalLTV).times(originalTVL).dividedBy(100).toNumber()
-    // const maxLtv = num(borrowLTV).times(tvl).dividedBy(100).toNumber()
-    // const newLtv = num(ltvSlider).times(maxLtv).dividedBy(100).toNumber()
-    // const diff = num(originalLtvAmount).minus(newLtv).abs().toNumber()
-    // const repay = num(newLtv).isLessThan(originalLtvAmount) ? diff : 0
-    // const mint = num(originalLtvAmount).isLessThan(newLtv) ? diff : 0
-    // let overdraft = false
-    // // if maxLtvAmount is less than debtAmount, then set overdraft to true
-    // const newDebtAmount = num(debtAmount).minus(repay).toNumber()
-    // if (num(maxLtv).isLessThan(newDebtAmount)) overdraft = true
-    // setMintState({ ltvSlider, mint, repay, overdraft })
-  }
+  const sliderValue = calcSliderValue(debtAmount, mintState.mint, mintState.repay)
 
   const onRest = () => {
     setInitialMintState({
       combinBalance,
-      ltv: originalLTV,
-      borrowLTV: originalBorrowLTV,
+      ltv: initialLTV,
+      borrowLTV: initialBorrowLTV,
       setMintState,
     })
   }
-
-  console.log({
-    debtAmount,
-  })
 
   return (
     <TabPanel>
@@ -82,19 +58,7 @@ const TakeAction = () => {
         mx="3"
       />
 
-      <Box px="3">
-        <LTVWithSlider
-          label="Mintable LTV"
-          value={num(debtAmount)
-            .plus(mintState?.mint || 0)
-            .minus(mintState.repay || 0)
-            .dp(2)
-            .toNumber()}
-          sliderValue={mintState?.ltvSlider}
-          onChange={totalsliderChange}
-        />
-      </Box>
-
+      <LTVWithSlider label="Mintable LTV" value={sliderValue} />
       <ActionButtons onRest={onRest} />
       <OverDraftMessage show={mintState.overdraft} />
       <TxError action={mint} />

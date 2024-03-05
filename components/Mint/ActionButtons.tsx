@@ -1,10 +1,9 @@
-import { HStack, Button, Stack, Text } from '@chakra-ui/react'
-import React from 'react'
-import { GrPowerReset } from 'react-icons/gr'
 import ConfirmModal from '@/components/ConfirmModal'
+import TxError from '@/components/TxError'
+import { Button, HStack } from '@chakra-ui/react'
+import { GrPowerReset } from 'react-icons/gr'
 import { Summary } from './Summary'
 import useMint from './hooks/useMint'
-import TxError from '@/components/TxError'
 import useMintState from './hooks/useMintState'
 
 type Props = {
@@ -17,7 +16,7 @@ const ActionButtons = ({ onRest }: Props) => {
 
   return (
     <HStack mt="5" gap="4">
-      <ConfirmModal label="Open" action={mint}>
+      <ConfirmModal label="Open" action={mint} isDisabled={mintState?.overdraft}>
         <Summary />
         <TxError action={mint} />
       </ConfirmModal>

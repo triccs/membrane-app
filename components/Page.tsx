@@ -1,9 +1,8 @@
-import { Box, Center, Container, Fade, HStack, Stack, Text } from '@chakra-ui/react'
+import { HStack, Stack } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import { Fragment, PropsWithChildren, useMemo } from 'react'
-import Logo from './Logo'
-import SideNav from './SideNav'
+import { PropsWithChildren, useMemo } from 'react'
 import RPCStatus from './RPCStatus'
+import SideNav from './SideNav'
 
 type Props = PropsWithChildren & {
   isScrollable?: boolean
@@ -22,15 +21,6 @@ const getBackgroundImage = (asPath: string) => {
   const backgroundImage = backgroundImageConfig[asPath] || defaultBackground
   return `url(${backgroundImage})`
 }
-
-const Mobile = () => (
-  <Center h="90vh" p={10} flexDir="column" display={['flex', 'none']} gap={10}>
-    <Logo />
-    <Text fontSize="xl" textAlign="center" variant="label">
-      Mobile support <br /> coming soon
-    </Text>
-  </Center>
-)
 
 const Page = ({ isScrollable = true, children }: Props) => {
   const { asPath } = useRouter()

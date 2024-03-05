@@ -1,28 +1,18 @@
 import { num } from '@/helpers/num'
-import { Badge, HStack, Image, Stack, Text } from '@chakra-ui/react'
-import useMintState from './hooks/useMintState'
-import { Asset } from '@/helpers/chain'
-import { AssetWithBalance } from './hooks/useCombinBalance'
 import { useAssetBySymbol } from '@/hooks/useAssets'
-import useMint from './hooks/useMint'
+import { Badge, HStack, Image, Stack, Text } from '@chakra-ui/react'
+import { AssetWithBalance } from './hooks/useCombinBalance'
+import useMintState from './hooks/useMintState'
 
-type SummaryItemProps = AssetWithBalance & {
+type SummaryItemProps = Partial<AssetWithBalance> & {
   label: string
-  amount: string
-  usdValue: string
+  amount?: string | number
   showBadge?: boolean
   badge?: string
   logo?: string
 }
 
-const SummaryItem = ({
-  label,
-  amount,
-  usdValue,
-  badge,
-  showBadge = true,
-  logo,
-}: SummaryItemProps) => (
+const SummaryItem = ({ label, amount = 0, badge, showBadge = true, logo }: SummaryItemProps) => (
   <HStack
     key={label}
     justifyContent="space-between"
@@ -62,23 +52,31 @@ export const Summary = () => {
     <Stack h="max-content" overflow="auto" w="full">
       {summary?.map((asset) => {
         const badge = num(asset.amount).isGreaterThan(0) ? 'Deposit' : 'Withdraw'
-        return <SummaryItem key={asset?.label} {...asset} badge={badge} />
+        return (
+          <SummaryItem
+            key={asset?.label}
+            label={asset?.label}
+            amount={asset?.amount}
+            logo={asset?.logo}
+            badge={badge}
+          />
+        )
       })}
+
       {num(mintState.mint).isGreaterThan(0) && (
         <SummaryItem
           label="CDT"
           badge="Mint"
-          value={mintState.mint?.toFixed(2) || '0'}
-          usdValue={mintState.mint?.toFixed(2) || '0'}
+          amount={mintState.mint?.toFixed(2)}
           logo={cdt?.logo}
         />
       )}
+
       {num(mintState.repay).isGreaterThan(0) && (
         <SummaryItem
           badge="Repay"
           label="CDT"
-          value={mintState.repay?.toFixed(2) || '0'}
-          usdValue={mintState.repay?.toFixed(2) || '0'}
+          amount={mintState.repay?.toFixed(2)}
           logo={cdt?.logo}
         />
       )}

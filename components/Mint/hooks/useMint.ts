@@ -34,7 +34,7 @@ const useMint = () => {
       })
       return [...depositAndWithdraw, ...mintAndRepay] as MsgExecuteContractEncodeObject[]
     },
-    enabled: !!address && !!positionId,
+    enabled: !!address && !!positionId && !mintState.overdraft,
   })
 
   return useSimulateAndBroadcast({

@@ -245,6 +245,7 @@ export const getLiqudationLTV = (
 }
 
 export const getLTV = (tvl: number, debtAmount: number) => {
+  if (num(debtAmount).isZero()) return 0
   return num(debtAmount).dividedBy(tvl).times(100).dp(2).toNumber()
 }
 
@@ -279,6 +280,8 @@ type VaultSummary = {
   prices?: Price[]
   newDeposit: number
   summary?: any[]
+  mint?: number
+  repay?: number
 }
 
 const updatedSummary = (summary: any, basketPositions: any, prices: any) => {
@@ -306,6 +309,8 @@ export const calculateVaultSummary = ({
   prices,
   newDeposit,
   summary = [],
+  mint = 0,
+  repay = 0,
 }: VaultSummary) => {
   if (!basket || !collateralInterest || !basketPositions || !prices) {
     return {
@@ -320,19 +325,20 @@ export const calculateVaultSummary = ({
   }
 
   const positions = updatedSummary(summary, basketPositions, prices)
-  const originalPositions = getPositions(basketPositions, prices)
+  const initialPositions = getPositions(basketPositions, prices)
   // const debtAmount = getDebt(basketPositions)
   const debtAmount = 50
   const basketAssets = getBasketAssets(basket!, collateralInterest!)
-  const originalTVL = getTVL(originalPositions)
-  const tvl = originalTVL + newDeposit
+  const initialTVL = getTVL(initialPositions)
+  const tvl = initialTVL + newDeposit
   const cost = getRateCost(positions, tvl, basketAssets)
-  const ltv = getLTV(tvl, debtAmount)
-  const originalLTV = getLTV(originalTVL, debtAmount)
+  const ltv = getLTV(tvl, num(debtAmount).plus(mint).minus(repay).toNumber())
+
+  const initialLTV = getLTV(initialTVL, debtAmount)
   const creditPrice = Number(basket?.credit_price.price) || 1
   const liqudationLTV = getLiqudationLTV(tvl, positions, basketAssets)
   const borrowLTV = getBorrowLTV(tvl, positions, basketAssets)
-  const originalBorrowLTV = getBorrowLTV(originalTVL, originalPositions, basketAssets)
+  const initialBorrowLTV = getBorrowLTV(initialTVL, initialPositions, basketAssets)
 
   const mintAmount = getMintAmount({
     tvl,
@@ -358,10 +364,9 @@ export const calculateVaultSummary = ({
     borrowLTV,
     liquidValue,
     liqudationLTV,
-    originalLTV,
-    originalTVL,
-    originalBorrowLTV,
-
+    initialLTV,
+    initialTVL,
+    initialBorrowLTV,
     mintAmount,
   }
 }

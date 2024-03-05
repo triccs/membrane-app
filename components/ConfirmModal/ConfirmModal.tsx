@@ -11,27 +11,27 @@ type Props = PropsWithChildren & {
   isDisabled?: boolean
 }
 
-const mockSuccess = {
-  tx: {
-    isSuccess: true,
-    data: {
-      code: 0,
-      gasUsed: 900909,
-      transactionHash: '7D8DBC214C1888267A48EEE325EADC6F58D765C3D03D0868D82A3650F3AECB9E',
-    },
-  },
-}
+// const mockSuccess = {
+//   tx: {
+//     isSuccess: true,
+//     data: {
+//       code: 0,
+//       gasUsed: 900909,
+//       transactionHash: '7D8DBC214C1888267A48EEE325EADC6F58D765C3D03D0868D82A3650F3AECB9E',
+//     },
+//   },
+// }
 
-const mockLoading = {
-  tx: {
-    isSuccess: true,
-    data: {
-      code: 0,
-      gasUsed: 900909,
-      transactionHash: '7D8DBC214C1888267A48EEE325EADC6F58D765C3D03D0868D82A3650F3AECB9E',
-    },
-  },
-}
+// const mockLoading = {
+//   tx: {
+//     isSuccess: true,
+//     data: {
+//       code: 0,
+//       gasUsed: 900909,
+//       transactionHash: '7D8DBC214C1888267A48EEE325EADC6F58D765C3D03D0868D82A3650F3AECB9E',
+//     },
+//   },
+// }
 
 const ConfirmModal = ({ children, label = 'Open', action, isDisabled = false }: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -39,7 +39,7 @@ const ConfirmModal = ({ children, label = 'Open', action, isDisabled = false }: 
     <>
       <Button
         isLoading={action?.simulate.isLoading || action?.tx.isPending}
-        isDisabled={isDisabled || action?.simulate.isError || !action?.simulate.data}
+        // isDisabled={isDisabled || action?.simulate.isError || !action?.simulate.data}
         onClick={onOpen}
       >
         {label}

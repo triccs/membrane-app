@@ -1,43 +1,17 @@
-import { HStack, Stack, Text } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
-import { AssetWithBalance } from './hooks/useCombinBalance'
-import useMintState from './hooks/useMintState'
-import { getSummary } from '@/helpers/mint'
 import { num } from '@/helpers/num'
+import { HStack, Stack, Text } from '@chakra-ui/react'
 import { SliderWithState } from './SliderWithState'
+import useMintState from './hooks/useMintState'
 import useVaultSummary from './hooks/useVaultSummary'
 
 export type LTVWithSliderProps = {
   label: string
   value?: number
-  usdValue?: number
-  sliderValue?: number
-  onChange: (value: number) => void
-  asset: AssetWithBalance
 }
 
-export const LTVWithSlider = ({
-  asset,
-  label,
-  value,
-  // sliderValue = 0,
-  // onChange,
-}: LTVWithSliderProps) => {
-  const [sliderValue, setSliderValue] = useState<number>(value || 0)
-  const { mintState, setMintState } = useMintState()
-
-  console.log({ sliderValue })
-
-  const {
-    tvl,
-    borrowLTV,
-    originalBorrowLTV,
-    originalLTV,
-    originalTVL = 0,
-    debtAmount,
-    mintAmount,
-  } = useVaultSummary()
-
+export const LTVWithSlider = ({ label, value = 0 }: LTVWithSliderProps) => {
+  const { setMintState } = useMintState()
+  const { tvl, borrowLTV, debtAmount } = useVaultSummary()
   const max = num(borrowLTV).times(tvl).dividedBy(100).dp(2).toNumber()
 
   const onChange = (value: number) => {
@@ -45,12 +19,13 @@ export const LTVWithSlider = ({
     const diff = num(debtAmount).minus(newValue).abs().toNumber()
     const mint = num(newValue).isGreaterThan(debtAmount) ? diff : 0
     const repay = num(newValue).isLessThan(debtAmount) ? diff : 0
-    setSliderValue(num(value).dp(2).toNumber())
-    setMintState({ mint, repay })
+    const ltvSlider = num(newValue).times(100).dividedBy(max).dp(2).toNumber()
+
+    setMintState({ mint, repay, ltvSlider })
   }
 
   return (
-    <Stack gap="0">
+    <Stack gap="0" px="3">
       <HStack justifyContent="space-between">
         <Text variant="lable" textTransform="unset">
           {label}
