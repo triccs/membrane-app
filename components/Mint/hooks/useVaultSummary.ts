@@ -19,8 +19,19 @@ const useVaultSummary = () => {
       prices,
       newDeposit: mintState?.totalUsdValue || 0,
       summary: mintState?.summary,
+      mint: mintState?.mint,
+      repay: mintState?.repay,
     })
-  }, [basketPositions, basket, collateralInterest, prices, mintState?.totalUsdValue])
+  }, [
+    basketPositions,
+    basket,
+    collateralInterest,
+    prices,
+    mintState?.totalUsdValue,
+    mintState?.summary,
+    mintState?.mint,
+    mintState?.repay,
+  ])
 }
 
 export default useVaultSummary

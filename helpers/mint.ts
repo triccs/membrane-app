@@ -19,27 +19,11 @@ const calculateNewDeposit = (sliderValue: number, combinUsdValue: number, price:
 
 export const getSummary = (assets: AssetWithBalance[]) => {
   const summary = assets
-    ?.map((asset) => {
-      const newDepositWillBe = calculateNewDeposit(
-        asset.sliderValue || 0,
-        asset.combinUsdValue,
-        asset.price,
-      )
-      const value = getDeposited(asset.deposited, newDepositWillBe)
-      return {
-        ...asset,
-        label: asset.symbol,
-        value,
-        usdValue: num(value).times(asset.price).toFixed(2),
-        currentDeposit: asset.deposited,
-        newDepositWillBe,
-      }
-    })
-    .filter((asset) => num(asset.value).dp(5).abs().isGreaterThan(0))
-    .sort((a) => (num(a.value).isNegative() ? 1 : -1))
+    .filter((asset) => num(asset.amount).dp(5).abs().isGreaterThan(0))
+    .sort((a) => (num(a.amount).isNegative() ? 1 : -1))
 
   const totalUsdValue = summary?.reduce((acc, asset) => {
-    return acc + num(asset.usdValue).toNumber()
+    return acc + num(asset.amountValue).toNumber()
   }, 0)
 
   return { summary, totalUsdValue }
@@ -59,6 +43,7 @@ export const calcuateMintAndRepay = (
   const diff = num(originalLtvAmount).minus(newLtvAmount).abs().dp(2).toNumber()
   let repay = num(newLtvAmount).isLessThan(originalLtvAmount) ? diff : 0
   let mint = num(originalLtvAmount).isLessThan(newLtvAmount) ? diff : 0
+  let overdraft = false
 
   if (maxLtvAmount < debtAmount) {
     repay = num(debtAmount).minus(maxLtvAmount).dp(2).toNumber()
@@ -68,9 +53,21 @@ export const calcuateMintAndRepay = (
     repay = 0
   }
 
+  // if maxLtvAmount is less than debtAmount, then set overdraft to true
+  if (num(maxLtvAmount).isLessThan(debtAmount)) overdraft = true
+
+  console.log({
+    mint,
+    repay,
+    overdraft,
+    maxLtvAmount,
+    debtAmount,
+  })
+
   return {
     mint,
     repay,
+    overdraft,
   }
 }
 
@@ -85,31 +82,50 @@ export const setInitialMintState = ({
   borrowLTV: any
   setMintState: any
 }) => {
-  const assets = combinBalance
-    ?.filter((balance) => num(balance.combinUsdValue || 0).isGreaterThan(0))
-    .map((balance) => {
-      const sliderValue = num(balance.deposited)
-        .dividedBy(balance.combinBalance)
-        .times(100)
-        .toNumber()
-      const amount = num(sliderValue)
-        .times(balance.combinUsdValue)
-        .dividedBy(100)
-        .dividedBy(balance.price)
-        .toFixed(sliderValue === 0 ? 2 : 6)
-      const amountValue = num(amount).times(balance.price).toNumber()
+  // const assets = combinBalance
+  //   ?.filter((balance) => num(balance.combinUsdValue || 0).isGreaterThan(0))
+  //   .map((balance) => {
+  //     const sliderValue = num(balance.deposited)
+  //       .dividedBy(balance.combinBalance)
+  //       .times(100)
+  //       .toNumber()
+  //     const amount = num(sliderValue)
+  //       .times(balance.combinUsdValue)
+  //       .dividedBy(100)
+  //       .dividedBy(balance.price)
+  //       .toFixed(sliderValue === 0 ? 2 : 6)
+  //     const amountValue = num(amount).times(balance.price).toNumber()
 
-      return {
-        ...balance,
-        amount,
-        amountValue,
-        sliderValue,
-      }
+  //     return {
+  //       ...balance,
+  //       amount,
+  //       amountValue,
+  //       sliderValue,
+  //     }
+  //   })
+
+  const assetsWithValuesGreaterThanZero = combinBalance
+    ?.filter((asset) => {
+      return num(asset.combinUsdValue || 0).isGreaterThan(0)
     })
+    .map((asset) => ({
+      ...asset,
+      sliderValue: asset.depositUsdValue || 0,
+      amount: 0,
+      amountValue: 0,
+    }))
 
   const ltvSlider = num(ltv).times(100).dividedBy(borrowLTV).toNumber()
 
-  setMintState({ assets, ltvSlider, mint: 0, repay: 0, summary: [], totalUsdValue: 0 })
+  setMintState({
+    assets: assetsWithValuesGreaterThanZero,
+    ltvSlider,
+    mint: 0,
+    repay: 0,
+    summary: [],
+    totalUsdValue: 0,
+    overdraft: false,
+  })
 }
 
 type GetDepostAndWithdrawMsgs = {
@@ -120,7 +136,7 @@ type GetDepostAndWithdrawMsgs = {
 
 const getAsset = (asset: any): Asset => {
   return {
-    amount: shiftDigits(Math.abs(asset.value), 6).dp(0).toString(),
+    amount: shiftDigits(Math.abs(asset.amount), 6).dp(0).toString(),
     info: {
       native_token: {
         denom: asset.base,
@@ -141,7 +157,7 @@ export const getDepostAndWithdrawMsgs = ({
   const msgs = []
 
   summary?.forEach((asset) => {
-    if (num(asset.value).isGreaterThan(0)) {
+    if (num(asset.amount).isGreaterThan(0)) {
       deposit.push(asset)
     } else {
       withdraw.push(asset)
@@ -153,7 +169,7 @@ export const getDepostAndWithdrawMsgs = ({
   const depositFunds = deposit
     .sort((a, b) => (a.base < b.base ? -1 : 1))
     .map((asset) => {
-      const amount = shiftDigits(asset.value, 6).dp(0).toString()
+      const amount = shiftDigits(asset.amount, 6).dp(0).toString()
       return coin(amount, asset.base)
     })
 

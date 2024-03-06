@@ -1,77 +1,71 @@
-import { useEffect } from 'react'
-import useCombinBalance from './useCombinBalance'
-import useMintState from './useMintState'
-import { num } from '@/helpers/num'
 import { getDepostAndWithdrawMsgs, getMintAndRepayMsgs } from '@/helpers/mint'
-import useWallet from '@/hooks/useWallet'
-import { decodeMsgs } from '@/helpers/decodeMsg'
 import { useBasketPositions } from '@/hooks/useCDP'
-import { useQuery } from '@tanstack/react-query'
-import useSimulate from '@/hooks/useSimulate'
+import useSimulateAndBroadcast from '@/hooks/useSimulateAndBroadcast'
+import useWallet from '@/hooks/useWallet'
 import { MsgExecuteContractEncodeObject } from '@cosmjs/cosmwasm-stargate'
-import useTransaction from '@/hooks/useTransaction'
-
-// loop through summary then dedeuct the summary walletBalance
-const getDepositAssets = (summary: any, combinBalance: any) => {
-  return summary?.map((s: any) => {
-    const asset = combinBalance.find((a: any) => a.label === s.symbol)
-    const deposit = num(s.value).minus(asset?.walletsdValue).toString()
-    return {
-      ...s,
-      deposit,
-    }
-  })
-}
+import { useQuery } from '@tanstack/react-query'
+import useMintState from './useMintState'
 
 const useMint = () => {
-  const combinBalance = useCombinBalance()
   const { mintState } = useMintState()
-  const { summary } = mintState
+  const { summary = [] } = mintState
   const { address } = useWallet()
   const { data: basketPositions } = useBasketPositions()
   const positionId = basketPositions?.[0]?.positions?.[0]?.position_id
 
-  const { data: msgs } = useQuery<MsgExecuteContractEncodeObject[] | null>({
+  const { data: msgs } = useQuery<MsgExecuteContractEncodeObject[] | undefined>({
     queryKey: [
       'mint',
       address,
       positionId,
-      summary?.map((s: any) => String(s.value)) || '0',
+      summary?.map((s: any) => String(s.amount)) || '0',
       mintState?.mint,
       mintState?.repay,
     ],
     queryFn: () => {
+      if (!address || !positionId) return
       const depositAndWithdraw = getDepostAndWithdrawMsgs({ summary, address, positionId })
+      console.log({ depositAndWithdraw })
       const mintAndRepay = getMintAndRepayMsgs({
         address,
         positionId,
         mintAmount: mintState?.mint,
         repayAmount: mintState?.repay,
       })
-      return [...depositAndWithdraw, ...mintAndRepay]
+      return [...depositAndWithdraw, ...mintAndRepay] as MsgExecuteContractEncodeObject[]
     },
-    enabled: !!address && !!positionId,
+    enabled: !!address && !!positionId && !mintState.overdraft,
   })
 
-  const simulate = useSimulate({
+  return useSimulateAndBroadcast({
     msgs,
-    amount: '1',
     queryKey: [
       String(mintState?.mint) || '0',
       String(mintState?.repay) || '0',
-      summary?.map((s: any) => String(s.value)) || '0',
+      ...summary?.map((s: any) => String(s.amount)),
     ],
+    amount: '1',
   })
 
-  const tx = useTransaction({
-    msgs,
-    fee: simulate.data?.[0] || [],
-  })
+  // const simulate = useSimulate({
+  //   msgs,
+  //   amount: '1',
+  //   queryKey: [
+  //     String(mintState?.mint) || '0',
+  //     String(mintState?.repay) || '0',
+  //     summary?.map((s: any) => String(s.value)) || '0',
+  //   ],
+  // })
 
-  return {
-    simulate,
-    tx,
-  }
+  // const tx = useTransaction({
+  //   msgs,
+  //   fee: simulate.data?.[0] || [],
+  // })
+
+  // return {
+  //   simulate,
+  //   tx,
+  // }
 }
 
 export default useMint

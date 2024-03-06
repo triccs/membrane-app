@@ -14,8 +14,10 @@ import { wallets as stationWallets } from '@cosmos-kit/station'
 import { Chain } from '@chain-registry/types'
 import WalletModal from '@/components/WalletModal'
 import { aminoTypes, registry, rpcUrl } from '@/config/defaults'
-import '@interchain-ui/react/styles'
 import { useEffect, useState } from 'react'
+import Layout from '@/components/Layout'
+
+import '@interchain-ui/react/styles'
 
 const signerOptions: SignerOptions = {
   signingStargate: () => {
@@ -62,6 +64,9 @@ const App = ({ Component, pageProps }: AppProps) => {
     <QueryClientProvider client={queryClient}>
       <ChakraProvider resetCSS theme={theme}>
         <ChainProvider
+          sessionOptions={{
+            duration: 1000 * 60 * 60 * 24 * 7, // 7 days
+          }}
           chains={chains}
           assetLists={assets}
           wallets={[
@@ -82,7 +87,9 @@ const App = ({ Component, pageProps }: AppProps) => {
             },
           }}
         >
-          <Component {...pageProps} />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
         </ChainProvider>
       </ChakraProvider>
     </QueryClientProvider>

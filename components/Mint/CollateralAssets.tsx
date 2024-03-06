@@ -1,31 +1,33 @@
-import { getSummary } from '@/helpers/mint'
 import { num } from '@/helpers/num'
 import { Stack } from '@chakra-ui/react'
 import { AssetWithSlider } from './AssetWithSlider'
 import useMintState from './hooks/useMintState'
+import useCombinBalance, { AssetWithBalance } from './hooks/useCombinBalance'
+import { useEffect } from 'react'
+
+const getAssetWithNonZeroValues = (combinBalance: AssetWithBalance[]) => {
+  return combinBalance
+    ?.filter((asset) => {
+      return num(asset.combinUsdValue || 0).isGreaterThan(0)
+    })
+    .map((asset) => ({
+      ...asset,
+      sliderValue: asset.depositUsdValue || 0,
+      amount: 0,
+      amountValue: 0,
+    }))
+}
 
 const CollateralAssets = () => {
   const { mintState, setMintState } = useMintState()
-  const sliderChange = (value: number, symbol: string) => {
-    const updatedAssets = mintState.assets.map((asset) => {
-      const sliderValue = asset.symbol === symbol ? value : asset.sliderValue
-      const amount = num(sliderValue)
-        .times(asset.combinUsdValue)
-        .dividedBy(100)
-        .dividedBy(asset.price)
-        .toFixed(6)
-      const amountValue = num(amount).times(asset.price).toNumber()
-      return {
-        ...asset,
-        amount,
-        amountValue,
-        sliderValue,
-      }
-    })
+  const combinBalance = useCombinBalance()
+  const { assets } = mintState
 
-    const { summary, totalUsdValue } = getSummary(updatedAssets)
-    setMintState({ assets: updatedAssets, summary, totalUsdValue })
-  }
+  useEffect(() => {
+    const assetsWithValuesGreaterThanZero = getAssetWithNonZeroValues(combinBalance)
+
+    setMintState({ assets: assetsWithValuesGreaterThanZero })
+  }, [combinBalance])
 
   return (
     <Stack
@@ -33,7 +35,8 @@ const CollateralAssets = () => {
       maxH="75vh"
       overflowY="auto"
       w="full"
-      px="3"
+      px="4"
+      py="2"
       css={{
         // Customize scrollbar appearance
         '::-webkit-scrollbar': {
@@ -46,16 +49,8 @@ const CollateralAssets = () => {
         },
       }}
     >
-      {mintState?.assets?.map((asset) => {
-        return (
-          <AssetWithSlider
-            key={asset?.base}
-            label={asset?.symbol}
-            value={asset.amount}
-            sliderValue={asset.sliderValue}
-            onChange={(v: number) => sliderChange(v, asset?.symbol)}
-          />
-        )
+      {assets?.map((asset) => {
+        return <AssetWithSlider key={asset?.base} asset={asset} label={asset?.symbol} />
       })}
     </Stack>
   )
