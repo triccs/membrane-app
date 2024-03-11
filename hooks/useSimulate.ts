@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 
 type Simulate = {
   msgs: MsgExecuteContractEncodeObject[] | undefined | null
-  amount: string | undefined
+  amount: string | undefined //Amount being executed on. ex: swap amount or mint amount being changed will force a resimulate
   enabled?: boolean
   queryKey?: string[]
 }
